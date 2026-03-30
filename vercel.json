@@ -1,1 +1,7 @@
-{"rewrites":[{"source":"/","destination":"/index.html"}],"cleanUrls":true}
+{
+  "rewrites": [
+    {"source": "/quiz", "destination": "/index.html"},
+    {"source": "/quiz/(.*)", "destination": "/index.html"},
+    {"source": "/(.*)", "destination": "/index.html"}
+  ]
+}
