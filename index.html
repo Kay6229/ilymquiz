@@ -727,20 +727,109 @@ function beginNextPlayer(){
   showPlayerSurvey();
 }
 
-function showWaiting(){
+function showWaitingComplete(){
   showScreen('s-waiting');
   var lc=document.getElementById('links-container');lc.innerHTML='';
-  playerNames.forEach(function(name,i){
-    var link='https://ilymquiz.com/quiz?session=demo-'+Date.now()+'&player='+i;
-    var wrap=document.createElement('div');wrap.style.marginBottom='14px';
-    var lbl=document.createElement('div');lbl.className='link-label';lbl.textContent=name+"'s link";
-    var box=document.createElement('div');box.className='link-box';box.textContent=link;
-    var btn=document.createElement('button');
-    btn.className='btn btn-primary btn-full '+t().btnCls;btn.style.marginTop='8px';
-    btn.textContent='Copy '+name+"'s link";
-    btn.onclick=(function(l,b,n){return function(){navigator.clipboard.writeText(l).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy '+n+"'s link";},2000);});};})(link,btn,name);
-    wrap.appendChild(lbl);wrap.appendChild(box);wrap.appendChild(btn);lc.appendChild(wrap);
+  var wrap=document.createElement('div');
+  wrap.style.cssText='text-align:center;padding:24px;background:#f0fdf4;border-radius:14px;border:1.5px solid #bbf7d0';
+  wrap.innerHTML='<div style="font-size:36px;margin-bottom:10px">✅</div><div style="font-size:20px;font-weight:800;color:#166534;margin-bottom:8px">You are done!</div><div style="font-size:14px;color:#166534;line-height:1.6">Your answers have been submitted. You will get a text with the full results as soon as everyone else finishes.</div>';
+  lc.appendChild(wrap);
+  // Keep polling
+  if(currentSessionId)startPolling(currentSessionId);
+}
+
+function showWaiting(){
+  showScreen('s-waiting');
+  var lc=document.getElementById('links-container');
+  lc.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:10px">⏳</div><div style="font-size:16px;font-weight:700;color:#111">Creating your session...</div><div style="font-size:13px;color:#888;margin-top:6px">Generating unique links and texting everyone now</div></div>';
+
+  // Call the create-session API
+  fetch('/api/create-session', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      mode: mode,
+      playerNames: playerNames,
+      playerPhones: playerPhones,
+      playerCount: playerNames.length,
+      quizLocation: quizLocation
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(!data.success){throw new Error(data.error||'Failed to create session');}
+    currentSessionId=data.sessionId;
+    lc.innerHTML='';
+
+    // Show success with individual copy links as backup
+    var successWrap=document.createElement('div');
+    successWrap.style.cssText='text-align:center;margin-bottom:20px;padding:16px;background:#f0fdf4;border-radius:12px;border:1.5px solid #bbf7d0';
+    successWrap.innerHTML='<div style="font-size:22px;margin-bottom:6px">✅</div><div style="font-size:15px;font-weight:700;color:#166534">Links sent!</div><div style="font-size:13px;color:#166534;margin-top:4px">Everyone has been texted their unique link</div>';
+    lc.appendChild(successWrap);
+
+    playerNames.forEach(function(name,i){
+      var link='https://www.ilymquiz.com/quiz?session='+data.sessionId+'&player='+i;
+      var wrap=document.createElement('div');wrap.style.marginBottom='12px';
+      var lbl=document.createElement('div');lbl.className='link-label';lbl.textContent=name+"'s backup link";
+      var box=document.createElement('div');box.className='link-box';box.style.fontSize='11px';box.textContent=link;
+      var btn=document.createElement('button');
+      btn.className='btn btn-primary btn-full '+t().btnCls;btn.style.marginTop='6px';
+      btn.textContent='Copy '+name+"'s link";
+      btn.onclick=(function(l,b,n){return function(){navigator.clipboard.writeText(l).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy '+n+"'s link";},2000);});};})(link,btn,name);
+      wrap.appendChild(lbl);wrap.appendChild(box);wrap.appendChild(btn);lc.appendChild(wrap);
+    });
+
+    // Start polling for completion
+    startPolling(data.sessionId);
+  })
+  .catch(function(err){
+    lc.innerHTML='<div style="text-align:center;padding:20px;color:#dc2626"><div style="font-size:20px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Could not send links</div><div style="font-size:13px;margin-top:4px">'+err.message+'</div></div>';
   });
+}
+
+var currentSessionId=null;
+var pollingInterval=null;
+
+function startPolling(sessionId){
+  if(pollingInterval)clearInterval(pollingInterval);
+  pollingInterval=setInterval(function(){
+    fetch('/api/check-completion?sessionId='+sessionId)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.allDone){
+        clearInterval(pollingInterval);
+        pollingInterval=null;
+        // Show results from API data
+        showResultsFromAPI(data);
+      } else {
+        // Update pending status
+        var statusEl=document.getElementById('poll-status');
+        if(statusEl){
+          statusEl.textContent=data.submittedCount+' of '+data.totalPlayers+' completed';
+        }
+      }
+    })
+    .catch(function(err){console.log('Polling error:',err);});
+  }, 5000); // poll every 5 seconds
+}
+
+function showResultsFromAPI(data){
+  // Use API leaderboard data to show results
+  // Override scores and langTotals with API data
+  var apiRanked=data.leaderboard;
+  scores=playerNames.map(function(n,i){
+    var match=apiRanked.find(function(r){return r.playerIndex===i;});
+    return match?match.score:0;
+  });
+  langTotals=playerNames.map(function(n,i){
+    var match=apiRanked.find(function(r){return r.playerIndex===i;});
+    return match?match.langTotals:{};
+  });
+  playerSurveys=playerNames.map(function(n,i){
+    var match=apiRanked.find(function(r){return r.playerIndex===i;});
+    return match?match.surveyAnswers:{};
+  });
+  showResults();
 }
 
 function showResults(){
