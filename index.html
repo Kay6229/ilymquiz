@@ -764,6 +764,15 @@ function showWaiting(){
   var lc=document.getElementById('links-container');
   lc.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:10px">⏳</div><div style="font-size:16px;font-weight:700;color:#111">Creating your session...</div><div style="font-size:13px;color:#888;margin-top:6px">Generating unique links and texting everyone now</div></div>';
 
+  // Format phone numbers to E.164 before sending
+  var formattedPhones = playerPhones.map(function(p){
+    if(!p)return '';
+    var digits=p.replace(/\D/g,'');
+    if(digits.length===10)return '+1'+digits;
+    if(digits.length===11&&digits[0]==='1')return '+'+digits;
+    return '+'+digits;
+  });
+
   // Call the create-session API
   fetch('/api/create-session', {
     method: 'POST',
@@ -771,7 +780,7 @@ function showWaiting(){
     body: JSON.stringify({
       mode: mode,
       playerNames: playerNames,
-      playerPhones: playerPhones,
+      playerPhones: formattedPhones,
       playerCount: playerNames.length,
       quizLocation: quizLocation
     })
