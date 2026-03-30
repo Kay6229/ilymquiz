@@ -1,0 +1,8 @@
+{
+  "name": "ilymquiz",
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "twilio": "^4.19.0"
+  }
+}
