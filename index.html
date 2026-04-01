@@ -343,7 +343,7 @@ footer a{color:#aaa;text-decoration:none}
     <div class="steps">
       <div class="step"><div class="step-num">1</div><h3>Pick your mode</h3><p>Couple, friends, or siblings. In person or long distance.</p><div class="step-detail">Same room or send a link</div></div>
       <div class="step"><div class="step-num">2</div><h3>Get your results</h3><p>11 real scenarios each. Scores, love styles, and honest insights.</p><div class="step-detail">Science-backed scoring</div></div>
-      <div class="step"><div class="step-num">3</div><h3>Share the official score</h3><p>Post it. Text it. Let the group chat weigh in.</p><div class="step-detail">Built to go viral</div></div>
+      <div class="step"><div class="step-num">3</div><h3>Share the official score</h3><p>Post it. Text it. Let the group chat weigh in.</p><div class="step-detail">Built to connect</div></div>
     </div>
   </div>
 </section>
@@ -365,9 +365,10 @@ footer a{color:#aaa;text-decoration:none}
     <h2>Built on real relationship science.</h2>
     <p>Every question is grounded in Dr. John Gottman's 40 years of research. Behavioral change, bids for connection, and daily intentionality are the real predictors of lasting love.</p>
     <div class="proof-stats">
-      <div><div class="proof-stat-num">11</div><div class="proof-stat-label">Questions each</div></div>
+      <div><div class="proof-stat-num">44</div><div class="proof-stat-label">Data points per player</div></div>
+      <div><div class="proof-stat-num">11</div><div class="proof-stat-label">Questions</div></div>
       <div><div class="proof-stat-num">3</div><div class="proof-stat-label">Quiz modes</div></div>
-      <div><div class="proof-stat-num">$10.99</div><div class="proof-stat-label">Full report</div></div>
+      <div><div class="proof-stat-num">$5.99</div><div class="proof-stat-label">Overview summary</div></div>
     </div>
   </div>
 </section>
@@ -496,8 +497,8 @@ var LANG_FULL={gifts:'giving thoughtful gifts',words:'open communication and wor
 
 var THEMES={
   couple:{accent:'#D4537E',bg:'#fbeaf0',btnCls:'couple-btn',turnCls:'couple-turn',progCls:'couple-prog',scenarioCls:'couple-scenario',cardCls:['couple-card-a','couple-card-b'],pillCls:'couple-pill',ansCls:'couple-ans',locCls:'couple-loc',countCls:'couple-count',emoji:'🩷',labels:['Partner A','Partner B'],fomoTag:'🔥 Your friends need to see this',maxPlayers:2,shareGrad:'linear-gradient(135deg,#D4537E,#993556)',shareName:'Couple'},
-  friends:{accent:'#c9a000',bg:'#fffde6',btnCls:'friends-btn',turnCls:'friends-turn',progCls:'friends-prog',scenarioCls:'friends-scenario',cardCls:['friends-card-a','friends-card-b'],pillCls:'friends-pill',ansCls:'friends-ans',locCls:'friends-loc',countCls:'friends-count',emoji:'💛',labels:['Friend A','Friend B'],fomoTag:'👀 The group chat is about to find out',maxPlayers:8,shareGrad:'linear-gradient(135deg,#c9a000,#8a6500)',shareName:'Friends'},
-  siblings:{accent:'#378ADD',bg:'#E6F1FB',btnCls:'siblings-btn',turnCls:'siblings-turn',progCls:'siblings-prog',scenarioCls:'siblings-scenario',cardCls:['siblings-card-a','siblings-card-b'],pillCls:'siblings-pill',ansCls:'siblings-ans',locCls:'siblings-loc',countCls:'siblings-count',emoji:'💙',labels:['Sibling A','Sibling B'],fomoTag:'👫 The family chat needs to see this',maxPlayers:8,shareGrad:'linear-gradient(135deg,#378ADD,#185FA5)',shareName:'Siblings'}
+  friends:{accent:'#c9a000',bg:'#fffde6',btnCls:'friends-btn',turnCls:'friends-turn',progCls:'friends-prog',scenarioCls:'friends-scenario',cardCls:['friends-card-a','friends-card-b'],pillCls:'friends-pill',ansCls:'friends-ans',locCls:'friends-loc',countCls:'friends-count',emoji:'💛',labels:['Friend A','Friend B'],fomoTag:'👀 The group chat is about to find out',maxPlayers:6,shareGrad:'linear-gradient(135deg,#c9a000,#8a6500)',shareName:'Friends'},
+  siblings:{accent:'#378ADD',bg:'#E6F1FB',btnCls:'siblings-btn',turnCls:'siblings-turn',progCls:'siblings-prog',scenarioCls:'siblings-scenario',cardCls:['siblings-card-a','siblings-card-b'],pillCls:'siblings-pill',ansCls:'siblings-ans',locCls:'siblings-loc',countCls:'siblings-count',emoji:'💙',labels:['Sibling A','Sibling B'],fomoTag:'👫 The family chat needs to see this',maxPlayers:6,shareGrad:'linear-gradient(135deg,#378ADD,#185FA5)',shareName:'Siblings'}
 };
 
 var mode='couple',quizLocation=null,playerCount=2,playerNames=[],playerPhones=[];
@@ -609,7 +610,8 @@ function startQuiz(){
   scores=playerNames.map(function(){return 0;});
   langTotals=playerNames.map(function(){return {};});
   playerSurveys=playerNames.map(function(){return {};});
-  QUESTIONS=ALL_QUESTIONS[mode].map(function(q){return{scenario:q.scenario,question:q.question,answers:shuffle(q.answers)};});
+  var qCount=playerCount<=2?11:playerCount<=4?9:7;
+  QUESTIONS=ALL_QUESTIONS[mode].map(function(q){return{scenario:q.scenario,question:q.question,answers:shuffle(q.answers)};}).slice(0,qCount);
   currentPlayer=0;currentQ=0;selectedIdx=null;
   showPlayerSurvey();
 }
@@ -1347,7 +1349,8 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
     langTotals=playerNames.map(function(){return {};});
     playerSurveys=playerNames.map(function(){return {};});
 
-    QUESTIONS=ALL_QUESTIONS[mode].map(function(q){
+    var qCount=playerCount<=2?11:playerCount<=4?9:7;
+    QUESTIONS=ALL_QUESTIONS[mode].slice(0,qCount).map(function(q){
       return{scenario:q.scenario,question:q.question,answers:shuffle(q.answers)};
     });
 
