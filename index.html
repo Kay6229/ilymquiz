@@ -1143,7 +1143,7 @@ function buildActivitySuggestion(ranked,isGroup){
   card.innerHTML='<div class="activity-card-top" style="background:linear-gradient(90deg,'+th.accent+','+th.accent+'99)"></div>'
       +'<div class="activity-card-body">'
       +'<div class="activity-card-header"><div class="activity-emoji">'+act.emoji+'</div>'
-      +'<div><div class="activity-label" style="color:'+th.accent+'">Recommended for your group</div>'
+      +'<div><div class="activity-label" style="color:'+th.accent+'">'+(mode==='couple'?'Recommended for you':'Recommended for your group')+'</div>'
       +'<div class="activity-title">'+act.title+'</div></div></div>'
       +'<div class="activity-desc">'+act.desc+'</div>'
       +'<div class="activity-why">'+act.why+'</div>'
