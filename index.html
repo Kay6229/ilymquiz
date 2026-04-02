@@ -454,8 +454,8 @@ footer a{color:#aaa;text-decoration:none}
   <div class="screen" id="s-waiting">
     <div class="waiting-wrap">
       <div class="waiting-icon">🔗</div>
-      <div class="waiting-title">All done here!</div>
-      <div class="waiting-sub">Send each person their unique link. Everyone gets the full results texted automatically once the last person finishes.</div>
+      <div class="waiting-title" id="waiting-title">All done here!</div>
+      <div class="waiting-sub" id="waiting-sub">Everyone gets the full results texted automatically once the last person finishes.</div>
       <div id="links-container"></div>
       <p style="font-size:12px;color:#aaa;text-align:center;margin-top:14px">Everyone gets texted at the same time when the last person submits.</p>
     </div>
@@ -831,23 +831,39 @@ function showWaiting(){
     currentSessionId=data.sessionId;
     lc.innerHTML='';
 
-    // Show success with individual copy links as backup
-    var successWrap=document.createElement('div');
-    successWrap.style.cssText='text-align:center;margin-bottom:20px;padding:16px;background:#f0fdf4;border-radius:12px;border:1.5px solid #bbf7d0';
-    successWrap.innerHTML='<div style="font-size:22px;margin-bottom:6px">✅</div><div style="font-size:15px;font-weight:700;color:#166534">Links sent!</div><div style="font-size:13px;color:#166534;margin-top:4px">Everyone has been texted their unique link</div>';
-    lc.appendChild(successWrap);
+    // Build personalized done screen
+    var otherNames=playerNames.slice(1);
+    var othersText=otherNames.length===1?otherNames[0]:otherNames.slice(0,-1).join(', ')+' and '+otherNames[otherNames.length-1];
+
+    var doneWrap=document.createElement('div');
+    doneWrap.style.cssText='text-align:center;padding:8px 0 20px';
+    doneWrap.innerHTML='<div style="font-size:48px;margin-bottom:16px">✅</div>'
+      +'<div style="font-size:24px;font-weight:900;color:#111;letter-spacing:-0.5px;margin-bottom:10px">You are done, '+playerNames[0]+'!</div>'
+      +'<div style="font-size:15px;color:#555;line-height:1.7;margin-bottom:20px;max-width:340px;margin-left:auto;margin-right:auto">'
+      +othersText+' just got a link to take their quiz. Sit back and relax — everyone gets the full results the moment the last person finishes.</div>'
+      +'<div style="font-size:12px;color:#aaa;margin-top:8px">Everyone gets texted at the same time when the last person submits.</div>';
+    lc.appendChild(doneWrap);
+
+    // Backup links in case texts are delayed
+    var backupWrap=document.createElement('div');
+    backupWrap.style.cssText='margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f0';
+    var backupLabel=document.createElement('div');
+    backupLabel.style.cssText='font-size:11px;color:#bbb;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;text-align:center;margin-bottom:10px';
+    backupLabel.textContent='Backup links';
+    backupWrap.appendChild(backupLabel);
 
     playerNames.forEach(function(name,i){
+      if(i===0)return; // skip Player 1
       var link='https://www.ilymquiz.com/quiz?session='+data.sessionId+'&player='+i;
-      var wrap=document.createElement('div');wrap.style.marginBottom='12px';
-      var lbl=document.createElement('div');lbl.className='link-label';lbl.textContent=name+"'s backup link";
+      var wrap=document.createElement('div');wrap.style.marginBottom='10px';
       var box=document.createElement('div');box.className='link-box';box.style.fontSize='11px';box.textContent=link;
       var btn=document.createElement('button');
       btn.className='btn btn-primary btn-full '+t().btnCls;btn.style.marginTop='6px';
       btn.textContent='Copy '+name+"'s link";
       btn.onclick=(function(l,b,n){return function(){navigator.clipboard.writeText(l).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy '+n+"'s link";},2000);});};})(link,btn,name);
-      wrap.appendChild(lbl);wrap.appendChild(box);wrap.appendChild(btn);lc.appendChild(wrap);
+      wrap.appendChild(box);wrap.appendChild(btn);backupWrap.appendChild(wrap);
     });
+    lc.appendChild(backupWrap);
 
     // Start polling for completion
     startPolling(data.sessionId);
