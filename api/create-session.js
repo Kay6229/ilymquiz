@@ -39,13 +39,22 @@ module.exports = async (req, res) => {
 
     const sessionId = session.id;
     const baseUrl = 'https://www.ilymquiz.com';
+    const challenger = playerNames[0];
 
-    // Send each player their unique link
+    // Mode-specific challenge message
+    const modePhrase = mode === 'friends'
+      ? 'thinks they are the better friend'
+      : mode === 'siblings'
+        ? 'thinks they are the better sibling'
+        : 'is certain they love you more';
+
+    // Send each player (except Player 1) their unique link
     const smsPromises = playerNames.map((name, index) => {
+      if (index === 0) return Promise.resolve(); // skip Player 1
       const phone = playerPhones[index];
       if (!phone) return Promise.resolve();
-      const link = `${baseUrl}/quiz?session=${sessionId}&player=${index}`;
-      const message = `Hey ${name}! It is your turn to take the ILYM Quiz. Click your unique link to start: ${link}`;
+      const link = baseUrl + '/quiz?session=' + sessionId + '&player=' + index;
+      const message = 'Hey ' + name + '! ' + challenger + ' ' + modePhrase + '. They just took the No, I Love YOU More Quiz to prove it — and they are challenging you to play. ' + link;
       return twilioClient.messages.create({
         body: message,
         messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
