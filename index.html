@@ -457,7 +457,7 @@ footer a{color:#aaa;text-decoration:none}
       <div class="waiting-title" id="waiting-title">All done here!</div>
       <div class="waiting-sub" id="waiting-sub">Everyone gets the full results texted automatically once the last person finishes.</div>
       <div id="links-container"></div>
-      <p style="font-size:12px;color:#aaa;text-align:center;margin-top:14px">Everyone gets texted at the same time when the last person submits.</p>
+
     </div>
   </div>
 
@@ -801,6 +801,10 @@ function showWaitingComplete(){
 
 function showWaiting(){
   showScreen('s-waiting');
+  var wt=document.getElementById('waiting-title');
+  var ws=document.getElementById('waiting-sub');
+  if(wt)wt.style.display='';
+  if(ws)ws.style.display='';
   var lc=document.getElementById('links-container');
   lc.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:10px">⏳</div><div style="font-size:16px;font-weight:700;color:#111">Creating your session...</div><div style="font-size:13px;color:#888;margin-top:6px">Generating unique links and texting everyone now</div></div>';
 
@@ -830,6 +834,12 @@ function showWaiting(){
     if(!data.success){throw new Error(data.error||'Failed to create session');}
     currentSessionId=data.sessionId;
     lc.innerHTML='';
+
+    // Hide static title and sub since we show personalized version
+    var wt=document.getElementById('waiting-title');
+    var ws=document.getElementById('waiting-sub');
+    if(wt)wt.style.display='none';
+    if(ws)ws.style.display='none';
 
     // Build personalized done screen
     var otherNames=playerNames.slice(1);
