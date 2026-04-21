@@ -400,14 +400,21 @@ footer a{color:#aaa;text-decoration:none}
       <div class="names-grid" id="names-grid"></div>
     </div>
 
-    <div id="phone-section" style="display:none">
-      <div class="setup-section">
-        <div class="setup-section-label">Phone numbers <span class="req">*</span></div>
-        <p style="font-size:13px;color:#888;margin-bottom:10px;line-height:1.65">Once all players complete the quiz, everyone gets texted the full results at the same time.</p>
-        <div class="names-grid" id="phones-grid"></div>
-      </div>
-    </div>
-
+<div id="phone-section" style="display:none">
+  <div class="setup-section">
+    <div class="setup-section-label">Phone numbers <span class="req">*</span></div>
+    <p style="font-size:13px;color:#888;margin-bottom:10px;line-height:1.65">Once all players complete the quiz, everyone gets texted the full results at the same time.</p>
+    <div class="names-grid" id="phones-grid"></div>
+  </div>
+  <div class="setup-section" id="sms-optin-section">
+    <label style="display:flex;gap:10px;align-items:flex-start;padding:14px;background:#fafafa;border:2px solid #eee;border-radius:12px;cursor:pointer" for="sms-optin-checkbox">
+      <input type="checkbox" id="sms-optin-checkbox" style="margin-top:3px;width:18px;height:18px;flex-shrink:0;cursor:pointer" onchange="checkSetupComplete()">
+      <span style="font-size:12px;color:#555;line-height:1.6">
+        By checking this box, you agree to receive SMS messages from <strong>ILYM Quiz</strong> (operated by <strong>Kaspen LLC</strong>) containing your unique quiz link and final results. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to opt out. Reply <strong>HELP</strong> for help. See our <a href="/privacy.html" target="_blank" style="color:#D4537E;text-decoration:underline">Privacy Policy</a> and <a href="/terms.html" target="_blank" style="color:#D4537E;text-decoration:underline">Terms</a>.
+      </span>
+    </label>
+  </div>
+</div>
     <button class="btn btn-primary btn-full couple-btn btn-disabled" id="start-btn" onclick="startQuiz()">Let's go</button>
     <p style="font-size:12px;color:#bbb;text-align:center;margin-top:10px">Fill in names and location to unlock</p>
   </div>
@@ -483,7 +490,7 @@ footer a{color:#aaa;text-decoration:none}
 
 </div>
 
-<footer><p>ILYMQuiz.com &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a> &nbsp;·&nbsp; Built with love (obviously)</p></footer>
+<footer><p>ILYMQuiz.com &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; Built with love (obviously)</p></footer>
 
 <script>
 var SURVEY_CONFIG={couple:[{id:'ll',question:'Which love language feels most like you?',options:['Words of affirmation','Quality time','Acts of service','Gifts','Physical touch']},{id:'dyn',question:'How would you describe your relationship dynamic?',options:['Playful and light','Emotionally deep','Steady and reliable','Passionate and intense']},{id:'val',question:'What do you value most in your relationship?',options:['Trust and loyalty','Open communication','Growing together','Laughter and fun','Unwavering support']},{id:'dur',question:'How long have you been together?',options:['Less than a year','1 to 5 years','5 to 10 years','10 years or more']}],friends:[{id:'ll',question:'How do you most naturally show up for a friend?',options:['Checking in with texts and calls','Showing up in person without being asked','Doing things for them before they ask','Remembering every little thing they mention','Hyping them up publicly every chance I get']},{id:'dyn',question:'How would you describe your friendship dynamic?',options:['Hilarious and chaotic','Ride or die loyal','Deep and emotionally honest','Chill and easygoing']},{id:'val',question:'What matters most to you in a friendship?',options:['They show up when it really counts','They make me laugh without fail','They know me better than I know myself','They never make me feel judged','Consistency no matter how much time passes']},{id:'dur',question:'How long have you been friends?',options:['Less than a year','1 to 5 years','5 to 10 years','Over 10 years']}],siblings:[{id:'ll',question:'How do you most naturally show love to your sibling?',options:['Saying it out loud often','Making time to be together','Doing things to help without being asked','Giving gifts or surprises','Checking in regularly']},{id:'dyn',question:'How would you describe your sibling dynamic?',options:['Competitive but fiercely loving','Close and protective','Steady and dependable','Loud and chaotic in the best way']},{id:'val',question:'What do you value most in your relationship with your sibling?',options:['Being there no matter what','Honest communication always','Shared history and inside jokes','Having each other\'s backs','Growing and changing together']},{id:'dur',question:'How long have you been in each other\'s lives?',options:['Less than 5 years','5 to 15 years','15 to 25 years','Our whole lives']}]};
@@ -593,7 +600,12 @@ function checkSetupComplete(){
   var locOk=quizLocation!==null;
   var nameInputs=document.querySelectorAll('#names-grid input');
   var namesOk=nameInputs.length>0&&Array.from(nameInputs).every(function(i){return i.value.trim()!=='';});
-  var allOk=locOk&&namesOk;
+  var smsOk=true;
+  if(quizLocation==='distance'){
+    var cb=document.getElementById('sms-optin-checkbox');
+    smsOk=cb&&cb.checked;
+  }
+  var allOk=locOk&&namesOk&&smsOk;
   var btn=document.getElementById('start-btn');
   if(allOk){btn.classList.remove('btn-disabled');btn.style.opacity='1';}
   else{btn.classList.add('btn-disabled');btn.style.opacity='0.4';}
