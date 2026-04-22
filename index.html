@@ -112,16 +112,17 @@ input[type=text]:focus,input[type=tel]:focus{border-color:#D4537E}
 .handoff-btn{width:100%;padding:20px;font-size:18px;font-weight:800;border:none;border-radius:14px;cursor:pointer;color:#fff;touch-action:manipulation;letter-spacing:-0.3px}
 
 /* QUIZ */
-
 .turn-badge{display:inline-block;font-size:13px;font-weight:700;padding:6px 14px;border-radius:10px;margin-bottom:14px}
 .q-num{font-size:12px;color:#bbb;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
 .progress-bar-wrap{position:relative;margin-bottom:16px}
 .progress-bar{height:28px;background:#e8e8e8;border-radius:999px;overflow:hidden;position:relative}
 .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#86efac,#22c55e,#15803d);transition:width 0.4s ease;min-width:28px}
 .progress-bar-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;font-weight:700;color:#fff;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.15)}
-.scenario-box{border-radius:12px 12px 0 0;padding:16px 18px;font-size:18px;line-height:1.5;font-weight:700;color:#111!important}
-.q-text-wrap{background:#111;border-radius:0 0 14px 14px;padding:16px 18px 18px;margin-bottom:18px}
-.q-text{font-size:18px;font-weight:800;color:#fff;line-height:1.3}
+
+/* SINGLE QUESTION BOX (collapsed scenario+question) */
+.q-single-box{background:#111;border-radius:14px;padding:22px 22px;margin-bottom:18px}
+.q-single-text{font-size:21px;font-weight:800;color:#fff;line-height:1.35;letter-spacing:-0.3px}
+
 .answers{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
 .ans-btn{background:#fff;border:2px solid #eee;border-radius:12px;padding:14px 14px;text-align:left;cursor:pointer;font-size:14px;color:#111;line-height:1.55;display:flex;gap:10px;align-items:flex-start;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .ans-btn:active{background:#f5f5f5}
@@ -232,21 +233,6 @@ input[type=text]:focus,input[type=tel]:focus{border-color:#D4537E}
 .share-card-logo{font-size:14px;font-weight:800;color:#111}
 .share-card-logo span{color:#D4537E}
 .share-card-mode{font-size:11px;font-weight:700;background:#f0f0f0;color:#555;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.06em}
-.share-card-winner{text-align:center;margin-bottom:14px;padding:16px 12px;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#f5d020,#c9940a,#7d5a00);border-radius:14px;position:relative;overflow:hidden}
-.share-card-winner-shine{position:absolute;top:-30px;left:-30px;width:80px;height:150px;background:rgba(255,255,255,0.35);transform:rotate(35deg);pointer-events:none;animation:shine 3s infinite}
-.share-card-winner-inner{position:relative;z-index:1}
-.share-card-trophy{font-size:26px;margin-bottom:4px}
-.share-card-winner-name{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.2)}
-.share-card-winner-sub{font-size:11px;color:rgba(255,255,255,0.9);margin-top:2px;font-weight:600}
-.share-card-scores{display:grid;gap:8px;margin-bottom:14px}
-.share-card-score-row{display:flex;align-items:center;justify-content:space-between;border-radius:10px;padding:10px 14px;margin-bottom:6px}
-.share-card-score-name{font-size:14px;font-weight:700;color:#111}
-.share-card-score-right{text-align:right}
-.share-card-score-pct{font-size:20px;font-weight:900;letter-spacing:-0.5px}
-.share-card-score-label{font-size:10px;color:#888;margin-top:1px}
-.share-card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f0f0f0;margin-top:4px}
-.share-card-url{font-size:11px;color:#999;font-weight:600}
-.share-card-hashtag{font-size:11px;color:#999;font-weight:700}
 .share-save-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-weight:800;touch-action:manipulation;margin-top:12px;margin-bottom:8px;color:#fff;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#c9940a,#7d5a00);box-shadow:0 2px 12px rgba(180,130,0,0.3);letter-spacing:-0.2px}
 .share-save-btn:active{opacity:0.85}
 .share-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -270,7 +256,6 @@ footer a{color:#aaa;text-decoration:none}
 .couple-btn:hover{background:#993556!important}
 .couple-loc{border-color:#D4537E!important;background:#fbeaf0!important}
 .couple-count{border-color:#D4537E!important;background:#fbeaf0!important;color:#72243E!important}
-.couple-scenario{color:#111!important;background:#fbeaf0;color:#72243E}
 .couple-card-a{background:#fbeaf0;border-color:#ED93B1}.couple-card-a .sc-name{color:#72243E}.couple-card-a .sc-pct{color:#993556}.couple-card-a .sc-badge{background:#ED93B1;color:#4B1528}.couple-card-a .sc-tier{color:#c0527a}
 .couple-card-b{background:#f5d8e4;border-color:#e07aa0}.couple-card-b .sc-name{color:#72243E}.couple-card-b .sc-pct{color:#993556}.couple-card-b .sc-badge{background:#e07aa0;color:#4B1528}.couple-card-b .sc-tier{color:#c0527a}
 
@@ -283,7 +268,6 @@ footer a{color:#aaa;text-decoration:none}
 .friends-btn:hover{background:#8a6500!important}
 .friends-loc{border-color:#c9a000!important;background:#fffde6!important}
 .friends-count{border-color:#c9a000!important;background:#fffde6!important;color:#6b5200!important}
-.friends-scenario{color:#111!important;background:#fffde6;color:#6b5200}
 .friends-card-a{background:#fffde6;border-color:#f5d020}.friends-card-a .sc-name{color:#6b5200}.friends-card-a .sc-pct{color:#8a6500}.friends-card-a .sc-badge{background:#f5d020;color:#4a3800}.friends-card-a .sc-tier{color:#8a6500}
 .friends-card-b{background:#fff9c4;border-color:#e8c200}.friends-card-b .sc-name{color:#6b5200}.friends-card-b .sc-pct{color:#8a6500}.friends-card-b .sc-badge{background:#e8c200;color:#4a3800}.friends-card-b .sc-tier{color:#8a6500}
 
@@ -296,7 +280,6 @@ footer a{color:#aaa;text-decoration:none}
 .siblings-btn:hover{background:#185FA5!important}
 .siblings-loc{border-color:#378ADD!important;background:#E6F1FB!important}
 .siblings-count{border-color:#378ADD!important;background:#E6F1FB!important;color:#0C447C!important}
-.siblings-scenario{color:#111!important;background:#E6F1FB;color:#0C447C}
 .siblings-card-a{background:#E6F1FB;border-color:#85B7EB}.siblings-card-a .sc-name{color:#0C447C}.siblings-card-a .sc-pct{color:#185FA5}.siblings-card-a .sc-badge{background:#85B7EB;color:#042C53}.siblings-card-a .sc-tier{color:#2a6faa}
 .siblings-card-b{background:#d5e8f7;border-color:#5fa0e0}.siblings-card-b .sc-name{color:#0C447C}.siblings-card-b .sc-pct{color:#185FA5}.siblings-card-b .sc-badge{background:#5fa0e0;color:#042C53}.siblings-card-b .sc-tier{color:#2a6faa}
 
@@ -308,6 +291,7 @@ footer a{color:#aaa;text-decoration:none}
 .share-actions{grid-template-columns:1fr}
 .share-actions-3{grid-template-columns:1fr}
 .handoff-name{font-size:28px}
+.q-single-text{font-size:18px}
 }
 @media(max-width:400px){
 .modes-grid{grid-template-columns:1fr}
@@ -329,10 +313,10 @@ footer a{color:#aaa;text-decoration:none}
     <button class="btn-hero-secondary" onclick="scrollToHow()">How it works</button>
   </div>
   <div class="hero-modes">
-    <span class="hero-mode-pill">💑 Couples</span>
+    <span class="hero-mode-pill">👩‍❤️‍👨 Couples</span>
     <span class="hero-mode-pill">👯 Friends</span>
     <span class="hero-mode-pill">👫 Siblings</span>
-    <span class="hero-mode-pill">📍 In person or long distance</span>
+    <span class="hero-mode-pill">📍 In person</span>
   </div>
 </section>
 
@@ -341,7 +325,7 @@ footer a{color:#aaa;text-decoration:none}
     <div class="section-tag">How it works</div>
     <h2 class="section-title">Three steps. Zero excuses.</h2>
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><h3>Pick your mode</h3><p>Couple, friends, or siblings. In person or long distance.</p><div class="step-detail">Same room or send a link</div></div>
+      <div class="step"><div class="step-num">1</div><h3>Pick your mode</h3><p>Couple, friends, or siblings. Pass the phone and play.</p><div class="step-detail">In person, all in one place</div></div>
       <div class="step"><div class="step-num">2</div><h3>Get your results</h3><p>11 real scenarios each. Scores, love styles, and honest insights.</p><div class="step-detail">Science-backed scoring</div></div>
       <div class="step"><div class="step-num">3</div><h3>Share the official score</h3><p>Post it. Text it. Let the group chat weigh in.</p><div class="step-detail">Built to connect</div></div>
     </div>
@@ -354,7 +338,7 @@ footer a{color:#aaa;text-decoration:none}
     <h2 class="section-title" style="margin-bottom:0">Who is playing?</h2>
   </div>
   <div class="modes-grid">
-    <div class="mode-tile couple" onclick="startSetup('couple')"><div class="mode-tile-icon">💑</div><div class="mode-tile-label">Couple</div><div class="mode-tile-desc">Find out who actually loves who more</div></div>
+    <div class="mode-tile couple" onclick="startSetup('couple')"><div class="mode-tile-icon">👩‍❤️‍👨</div><div class="mode-tile-label">Couple</div><div class="mode-tile-desc">Find out who actually loves who more</div></div>
     <div class="mode-tile friends" onclick="startSetup('friends')"><div class="mode-tile-icon">👯</div><div class="mode-tile-label">Friends</div><div class="mode-tile-desc">Best friend showdown</div></div>
     <div class="mode-tile siblings" onclick="startSetup('siblings')"><div class="mode-tile-icon">👫</div><div class="mode-tile-label">Siblings</div><div class="mode-tile-desc">Who loves their sibling more</div></div>
   </div>
@@ -375,18 +359,18 @@ footer a{color:#aaa;text-decoration:none}
 
 <div class="quiz-section">
 
-  <!-- SETUP: just location, count, names, phones -->
+  <!-- SETUP -->
   <div class="screen" id="s-setup">
     <button class="setup-back" onclick="backToModes()">← Back</button>
     <h2 class="setup-title" id="setup-title">Set up your quiz</h2>
     <p class="setup-sub">Pick your settings. Each person will answer their own questions when it is their turn.</p>
-    <div class="required-notice">⚡ Every player answers their own survey questions privately on their turn.</div>
+    <div class="required-notice">⚡ Every player answers their own questions on their turn. Be honest — the math depends on it.</div>
 
     <div class="setup-section">
       <div class="setup-section-label">Are you in the same place? <span class="req">*</span></div>
       <div class="location-grid">
         <div class="location-card" id="loc-same" onclick="selLocation('same')"><div class="location-icon">🛋️</div><div class="location-label">Same room</div><div class="location-desc">Pass the phone each turn</div></div>
-        <div class="location-card" id="loc-distance" onclick="selLocation('distance')"><div class="location-icon">📱</div><div class="location-label">Long distance</div><div class="location-desc">Everyone gets their own link</div></div>
+        <div class="location-card" id="loc-distance" style="opacity:0.55;cursor:not-allowed;position:relative" onclick="alert('Long distance mode is coming soon! For now, please use Same Room mode.')"><div class="location-icon">📱</div><div class="location-label">Long distance</div><div class="location-desc" style="color:#D4537E;font-weight:700">Coming soon</div></div>
       </div>
     </div>
 
@@ -420,13 +404,13 @@ footer a{color:#aaa;text-decoration:none}
     <p style="font-size:12px;color:#bbb;text-align:center;margin-top:10px">Fill in names and location to unlock</p>
   </div>
 
-  <!-- PLAYER SURVEY SCREEN (per player) -->
+  <!-- PLAYER SURVEY SCREEN -->
   <div class="screen" id="s-survey">
     <div style="text-align:center;margin-bottom:28px;padding:24px 0 0">
       <div style="font-size:13px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px" id="survey-its-label">It is</div>
       <div style="font-size:clamp(28px,8vw,46px);font-weight:900;letter-spacing:-1.5px;color:#111;line-height:1;margin-bottom:4px" id="survey-player-name"></div>
       <div style="font-size:clamp(24px,6vw,38px);font-weight:900;letter-spacing:-1px;color:#111;line-height:1;margin-bottom:16px">Turn!</div>
-      <p style="font-size:14px;color:#666;line-height:1.6;max-width:340px;margin:0 auto" id="survey-sub">Answer these for yourself — your answers are completely private.</p>
+      <p style="font-size:14px;color:#666;line-height:1.6;max-width:340px;margin:0 auto" id="survey-sub">🤙 Pinky promise to answer honestly. The math depends on it.</p>
     </div>
     <div id="survey-container"></div>
     <button class="btn btn-primary btn-full couple-btn btn-disabled" id="survey-next-btn" onclick="startPlayerQuiz()">Start my questions →</button>
@@ -441,31 +425,29 @@ footer a{color:#aaa;text-decoration:none}
         <div class="progress-bar-label" id="q-num">Question 1 of 11</div>
       </div>
     </div>
-    <div class="scenario-box couple-scenario" id="scenario-box"></div>
-    <div class="q-text-wrap"><div class="q-text" id="q-text"></div></div>
+    <div class="q-single-box"><div class="q-single-text" id="q-text"></div></div>
     <div class="answers" id="answers"></div>
     <button class="btn btn-primary couple-btn" id="next-btn" onclick="nextQ()" style="display:none">Next</button>
   </div>
 
-  <!-- HANDOFF SCREEN -->
+  <!-- HANDOFF -->
   <div class="screen" id="s-handoff">
     <div class="handoff-wrap">
       <div class="handoff-emoji" id="handoff-emoji">📱</div>
       <div class="handoff-pre" id="handoff-pre">Next up</div>
       <div class="handoff-name" id="handoff-next-name"></div>
-      <div class="handoff-sub" id="handoff-sub">Pick up the phone and hit the button when you are ready. Your answers are completely private.</div>
+      <div class="handoff-sub" id="handoff-sub">Pick up the phone and hit the button when you are ready. 🤙 Pinky promise to answer honestly.</div>
       <button class="handoff-btn couple-btn" id="handoff-btn" onclick="beginNextPlayer()">I'm ready — let's go 👊</button>
     </div>
   </div>
 
-  <!-- WAITING (long distance) -->
+  <!-- WAITING -->
   <div class="screen" id="s-waiting">
     <div class="waiting-wrap">
       <div class="waiting-icon">🔗</div>
       <div class="waiting-title" id="waiting-title">All done here!</div>
       <div class="waiting-sub" id="waiting-sub">Everyone gets the full results texted automatically once the last person finishes.</div>
       <div id="links-container"></div>
-
     </div>
   </div>
 
@@ -473,19 +455,14 @@ footer a{color:#aaa;text-decoration:none}
   <div class="screen" id="s-results">
     <div id="winner-display"></div>
     <div id="score-display"></div>
-
     <div class="result-section-title">Insights</div>
     <div id="insights-display"></div>
-
     <div class="result-section-title" style="font-size:13px;font-weight:800;color:#333;letter-spacing:0.05em;text-transform:none;margin-bottom:4px">Shared Activity for Deeper Connection</div>
     <p style="font-size:12px;color:#888;margin-bottom:12px">Based on your combined love styles</p>
     <div id="activity-display"></div>
-
     <div class="pricing-section" id="pricing-section"></div>
-
     <div class="result-section-title">Share your score</div>
     <div class="share-section" id="share-section"></div>
-
     <p class="science-note">Scoring draws from Dr. John Gottman's research on bids for connection and behavioral change. Built for fun. Use it to spark a real conversation.</p>
   </div>
 
@@ -496,21 +473,246 @@ footer a{color:#aaa;text-decoration:none}
 <script>
 var SURVEY_CONFIG={couple:[{id:'ll',question:'Which love language feels most like you?',options:['Words of affirmation','Quality time','Acts of service','Gifts','Physical touch']},{id:'dyn',question:'How would you describe your relationship dynamic?',options:['Playful and light','Emotionally deep','Steady and reliable','Passionate and intense']},{id:'val',question:'What do you value most in your relationship?',options:['Trust and loyalty','Open communication','Growing together','Laughter and fun','Unwavering support']},{id:'dur',question:'How long have you been together?',options:['Less than a year','1 to 5 years','5 to 10 years','10 years or more']}],friends:[{id:'ll',question:'How do you most naturally show up for a friend?',options:['Checking in with texts and calls','Showing up in person without being asked','Doing things for them before they ask','Remembering every little thing they mention','Hyping them up publicly every chance I get']},{id:'dyn',question:'How would you describe your friendship dynamic?',options:['Hilarious and chaotic','Ride or die loyal','Deep and emotionally honest','Chill and easygoing']},{id:'val',question:'What matters most to you in a friendship?',options:['They show up when it really counts','They make me laugh without fail','They know me better than I know myself','They never make me feel judged','Consistency no matter how much time passes']},{id:'dur',question:'How long have you been friends?',options:['Less than a year','1 to 5 years','5 to 10 years','Over 10 years']}],siblings:[{id:'ll',question:'How do you most naturally show love to your sibling?',options:['Saying it out loud often','Making time to be together','Doing things to help without being asked','Giving gifts or surprises','Checking in regularly']},{id:'dyn',question:'How would you describe your sibling dynamic?',options:['Competitive but fiercely loving','Close and protective','Steady and dependable','Loud and chaotic in the best way']},{id:'val',question:'What do you value most in your relationship with your sibling?',options:['Being there no matter what','Honest communication always','Shared history and inside jokes','Having each other\'s backs','Growing and changing together']},{id:'dur',question:'How long have you been in each other\'s lives?',options:['Less than 5 years','5 to 15 years','15 to 25 years','Our whole lives']}]};
 
-var ALL_QUESTIONS={couple:[{scenario:"You are running late getting back to your person. You have already texted to let them know.",question:"What do you do next?",answers:[{text:"Make a mental note to actually fix your schedule because this keeps happening and you know it bothers them",points:4,lang:"change"},{text:"Send a second text with your ETA so they are not stuck wondering when to actually expect you",points:3,lang:"words"},{text:"Swing by their favorite spot on the way even though it adds time you do not really have",points:3,lang:"gifts"},{text:"You were already running behind so you head straight to them and explain when you get there",points:1,lang:"none"}]},{scenario:"You and your person are trying to pick something to watch. You have been looking forward to a specific show for days. They have something completely different in mind and seem pretty set on it.",question:"What do you do?",answers:[{text:"You suggest watching their pick tonight and saving yours for next time, genuinely without keeping score",points:4,lang:"service"},{text:"You bring up that you have been waiting for yours and try to negotiate",points:3,lang:"words"},{text:"You watch their pick but make sure they know you are putting yours on after",points:2,lang:"none"},{text:"You put yours on because they will enjoy it once it starts",points:1,lang:"none"}]},{scenario:"Your person has had a hard week. Nothing catastrophic, just a slow grind of stress that has worn them down. They have not asked for anything.",question:"What does your instinct tell you to do?",answers:[{text:"Handle something on their to-do list that you know they have been dreading, without mentioning it",points:4,lang:"service"},{text:"Clear your evening and just be present with them, no agenda, no distractions",points:4,lang:"time"},{text:"Send a message during the day letting them know you see how hard they are working",points:3,lang:"words"},{text:"Give them space and let them come to you when they are ready",points:2,lang:"none"}]},{scenario:"In passing last week your person mentioned wanting to try a new place. You did not make a big deal of it in the moment.",question:"What happens with that information?",answers:[{text:"You make a plan without being asked and surprise them with it",points:4,lang:"service"},{text:"It is in the back of your mind and you bring it up next time you are figuring out where to go",points:3,lang:"time"},{text:"You both mentioned it sounded good and neither of you ever followed through",points:2,lang:"none"},{text:"You genuinely forgot, it did not register as something to act on",points:1,lang:"none"}]},{scenario:"You are hanging out with friends. Someone makes a joke at your person's expense. It lands and gets a laugh but they go a little quiet.",question:"What do you do?",answers:[{text:"You say something light but clear that lets the room know you are on their side, without making it a scene",points:4,lang:"change"},{text:"You check in quietly with them after to make sure they are okay",points:3,lang:"words"},{text:"You make a mental note but stay in the moment because drawing attention to it might embarrass them more",points:2,lang:"none"},{text:"You laugh along too because you know they can take a joke and making it a thing would be worse",points:1,lang:"none"}]},{scenario:"Your person told you that something you do bothers them. Not during a fight, just an honest calm conversation. You heard them.",question:"What has actually happened since then?",answers:[{text:"You changed it. It took real effort but you did it because it mattered to them",points:4,lang:"change"},{text:"You are aware of it now and catch yourself more often even if you still slip sometimes",points:3,lang:"change"},{text:"You sat down and explained why you do it so they could better understand where you are coming from",points:2,lang:"words"},{text:"You apologize when it comes up but have struggled to change the underlying pattern",points:1,lang:"none"}]},{scenario:"Your person's family has something going on and they are stressed about it. You are going together.",question:"How do you show up?",answers:[{text:"You ask beforehand what would actually help and then do that specific thing",points:4,lang:"service"},{text:"You stay close, keep conversation moving, and step in when you see them getting stretched too thin",points:4,lang:"time"},{text:"You are pleasant and sociable but mostly let them handle their own family dynamics",points:2,lang:"none"},{text:"You check in when you can but it is their family and their dynamic to manage",points:1,lang:"none"}]},{scenario:"Your person gets unexpectedly sick on a day you both had real plans you were genuinely looking forward to.",question:"What actually happens?",answers:[{text:"Plans are off without a second thought. You get what they need and you stay close",points:4,lang:"service"},{text:"You feel the disappointment but pivot without making them feel guilty and take care of what they need",points:3,lang:"service"},{text:"You reschedule everything, make sure they are settled, and check in throughout the day",points:3,lang:"time"},{text:"You go ahead with part of the plans since they would honestly want you to have fun, and check in throughout",points:1,lang:"none"}]},{scenario:"You and your person are in a disagreement. Nobody is yelling but you are both frustrated and the conversation has completely stalled.",question:"What do you do?",answers:[{text:"You take a breath and look for the part of what they are saying that is actually valid, even if you still disagree",points:4,lang:"change"},{text:"You suggest a short break to reset, not to avoid it but so you can both actually hear each other",points:4,lang:"words"},{text:"You go quiet because you need time to process before you say something you will regret",points:2,lang:"none"},{text:"You hold your position calmly and wait for them to come around because you genuinely believe you are right",points:1,lang:"none"}]},{scenario:"You are telling your person something about your day, nothing major, just a casual story. Halfway through you notice they are on their phone.",question:"What do you do about it?",answers:[{text:"You let it go this time but bring it up later as something that genuinely matters to you",points:4,lang:"change"},{text:"You stop mid-sentence and ask if now is actually a good time to talk",points:3,lang:"words"},{text:"You notice it, finish the story anyway, and quietly file it away",points:2,lang:"none"},{text:"You let it go and finish the story because you do not need their full attention for every little thing",points:2,lang:"none"}]},{scenario:"You just reconnected with your person after a long day apart. You already greeted them warmly and intentionally, phone down, eyes up, fully present.",question:"What do you do next?",answers:[{text:"You already thought ahead, food is handled or something on their list got done",points:4,lang:"service"},{text:"You ask one real question about their day and actually listen to the full answer",points:3,lang:"words"},{text:"You grab them a snack or a drink without being asked",points:3,lang:"gifts"},{text:"You give them a few minutes to decompress before jumping into conversation",points:2,lang:"none"}]}],friends:[{scenario:"You are texting with your friend and something about their tone sounds off. You ask how they are doing and they say they are fine.",question:"What do you do?",answers:[{text:"You call them immediately because you know what fine sounds like from them and this is not it",points:4,lang:"time"},{text:"You text back something like okay but are you actually fine and give them the opening without forcing it",points:3,lang:"words"},{text:"You send something funny to let them know you see them and lighten the mood a little",points:2,lang:"none"},{text:"You take the answer at face value and move on, if they wanted to talk they would say so",points:1,lang:"none"}]},{scenario:"Your friend is going through something hard. A rough breakup, a job loss, a hard stretch. They have not explicitly asked for help.",question:"What do you actually do?",answers:[{text:"You check in consistently over the following weeks because the first wave is never the hardest part",points:4,lang:"change"},{text:"You show up with food or something practical because sometimes doing says more than saying",points:4,lang:"service"},{text:"You send a thoughtful message letting them know you are thinking about them and are there when needed",points:3,lang:"words"},{text:"You give them space to process and wait for them to reach out when they are ready",points:2,lang:"none"}]},{scenario:"Your friend has a huge moment coming up, a tryout, a first date, a big presentation they have been nervous about for weeks.",question:"What do you do?",answers:[{text:"You send them a hype message the morning of, completely unprompted",points:4,lang:"words"},{text:"You make sure to follow up after to hear every detail about how it went",points:3,lang:"time"},{text:"You mention it if it comes up in conversation but do not want to pile on the pressure",points:2,lang:"none"},{text:"You knew it was coming up but the day got away from you and you missed the moment",points:1,lang:"none"}]},{scenario:"You are in a group setting and someone subtly throws your friend under the bus. They laugh it off but you know it landed differently.",question:"What do you do?",answers:[{text:"You say something in the moment that makes it clear you are not going along with it, without blowing it up",points:4,lang:"change"},{text:"You check in with your friend afterward to make sure they are actually okay",points:3,lang:"words"},{text:"You note it mentally but let your friend lead on how to handle their own dynamics",points:2,lang:"none"},{text:"You laugh along because your friend handled it fine and making it a thing would be worse",points:1,lang:"none"}]},{scenario:"Your friend tells you they need a favor. It is a big one that will cost you real time and effort.",question:"What happens?",answers:[{text:"You say yes immediately and figure out the logistics afterward",points:4,lang:"service"},{text:"You are honest about your capacity but find a version of the favor you can deliver on",points:3,lang:"words"},{text:"You help but you definitely keep a quiet mental tab on it",points:2,lang:"none"},{text:"You have too much going on and have to say no, you feel bad about it though",points:1,lang:"none"}]},{scenario:"Your friend mentions something in passing that they would love. A book, a restaurant, a small experience.",question:"What happens next?",answers:[{text:"You file it away and bring it up as a gift or a plan later when they have forgotten they mentioned it",points:4,lang:"gifts"},{text:"You make a note in your phone right then so you do not forget",points:4,lang:"service"},{text:"It stays in the back of your mind and you reference it when the moment feels right",points:3,lang:"time"},{text:"You genuinely meant to do something with it but life moved on and the moment passed",points:1,lang:"none"}]},{scenario:"Your friend did something that genuinely bothered you. It was not a blowup, just something that sat with you after.",question:"What do you do with it?",answers:[{text:"You say something directly but kindly because letting it build quietly is worse for both of you",points:4,lang:"change"},{text:"You bring it up at a calm moment and explain how it landed for you",points:3,lang:"words"},{text:"You let it go this time but file it away in case it becomes a pattern",points:2,lang:"none"},{text:"You vent to someone else to get it out of your system and then move on",points:1,lang:"none"}]},{scenario:"Your friend is going through a season where they are harder to reach. Less responsive, slower to reply.",question:"How do you handle it?",answers:[{text:"You keep showing up at your normal level and let them come back when they surface",points:4,lang:"change"},{text:"You check in to make sure they know you are still there without making them feel guilty",points:4,lang:"words"},{text:"You match their energy and pull back too because good friendships should feel equal",points:2,lang:"none"},{text:"You notice the shift and feel a little self pity, but you keep it to yourself and know there are seasons",points:1,lang:"none"}]},{scenario:"You and your friend have a disagreement. There is real tension and neither of you has addressed it yet.",question:"What do you do?",answers:[{text:"You reach out and say something like hey I think we should talk about the other day",points:4,lang:"change"},{text:"You give it a day or two to cool and then bring it up with care",points:3,lang:"words"},{text:"You act normal and hope the tension dissolves on its own because most things do",points:2,lang:"none"},{text:"You do not want to make it a bigger deal than it is, so you wait for them to bring it up first",points:1,lang:"none"}]},{scenario:"Your friend has a big win. A promotion, an engagement, something they have been working toward for a long time.",question:"How do you show up for it?",answers:[{text:"You do something intentional to mark it, a dinner, a small gift, a gesture that says you paid attention",points:4,lang:"service"},{text:"You celebrate them as loudly and publicly as they want because they deserve every bit of it",points:3,lang:"words"},{text:"You congratulate them warmly and let them lead on how much they want to celebrate",points:3,lang:"time"},{text:"You send a quick congrats and mean it, you just are not really an over-the-top person",points:2,lang:"none"}]},{scenario:"It has been a while since you and your friend have actually connected. Not just \"liked\" each other's posts but actually talked.",question:"Who makes the move?",answers:[{text:"You call them because you miss them and do not want to be the friend who only checks in when something is wrong",points:4,lang:"time"},{text:"You send them something small, a meme, a memory, something that opens the door without pressure",points:3,lang:"gifts"},{text:"You text something low stakes that reopens the door without making it feel heavy",points:3,lang:"words"},{text:"You wait because you feel like you are always the one reaching out and you do not want to be a pest",points:1,lang:"none"}]}],siblings:[{scenario:"It is a parent's birthday. Nobody has coordinated anything yet and the day is approaching.",question:"What do you do?",answers:[{text:"You take the lead, text the group, make a plan, and handle the details so everyone just shows up",points:4,lang:"service"},{text:"You reach out directly to your sibling to coordinate something together",points:3,lang:"time"},{text:"You bring it up in the family chat and wait to see who else takes the wheel",points:2,lang:"none"},{text:"You assume someone else has it handled and check in closer to the date",points:1,lang:"none"}]},{scenario:"Your sibling is going through something hard. They have not said much about it but you can tell.",question:"What do you do?",answers:[{text:"You call them directly because you are not going to pretend you do not notice",points:4,lang:"time"},{text:"You send a message that lets them know you see them and are there when they want to talk",points:3,lang:"words"},{text:"You wait for them to come to you because you do not want to overstep their boundaries",points:2,lang:"none"},{text:"You mention it to your parents and hope the family rallies around them",points:1,lang:"none"}]},{scenario:"Your sibling has a big moment coming up, something they have worked hard for and been nervous about.",question:"What do you do?",answers:[{text:"You send them a hype message the morning of without them having to remind you",points:4,lang:"words"},{text:"You make sure to follow up after to hear every detail about how it went",points:3,lang:"time"},{text:"You mention it if it comes up but do not want to add to the pressure",points:2,lang:"none"},{text:"You knew it was coming up but the day got away from you and you missed the moment",points:1,lang:"none"}]},{scenario:"There is a family gathering and the usual tension is already simmering before anyone even arrives.",question:"How do you show up?",answers:[{text:"You check in with your sibling beforehand so you can go in with a shared game plan",points:4,lang:"change"},{text:"You stick close to your sibling and run interference when things get tense",points:4,lang:"time"},{text:"You survive it and debrief with your sibling after, that is your version of support",points:3,lang:"words"},{text:"You keep things light and hope the energy stays manageable on its own",points:2,lang:"none"}]},{scenario:"Your sibling did something that bothered you. It was not catastrophic but it has not been addressed.",question:"What do you do with it?",answers:[{text:"You bring it up at a calm moment because you would rather say something than let it quietly fester",points:4,lang:"change"},{text:"You mention it lightly to gauge if they even realize what they did",points:3,lang:"words"},{text:"You vent to a parent or other sibling to process it, then let it go",points:2,lang:"none"},{text:"You let it go entirely, not every family thing is worth the conversation",points:1,lang:"none"}]},{scenario:"Your sibling needs a real favor. The kind that costs you genuine time, energy, or money.",question:"What happens?",answers:[{text:"You say yes and figure out how to make it work because that is just what family does",points:4,lang:"service"},{text:"You help with what you genuinely can and are honest about what you cannot right now",points:3,lang:"words"},{text:"You help, but you file it away. You never know when you will need a favor returned.",points:2,lang:"none"},{text:"You have too much going on and have to say no, and you feel guilty about it for a while",points:1,lang:"none"}]},{scenario:"Your parent calls one of you far more often than the other. It has been noticed by both of you.",question:"How do you handle the dynamic?",answers:[{text:"You call your parent more proactively so the weight does not keep falling on one sibling",points:4,lang:"service"},{text:"You acknowledge it with your sibling and figure out a more balanced rhythm together",points:4,lang:"change"},{text:"You notice it but say nothing because it feels like a conversation that could go sideways fast",points:2,lang:"none"},{text:"You assume your sibling does not mind since they have always been the closer one anyway",points:1,lang:"none"}]},{scenario:"Your sibling is going through a season where they are hard to reach. Less responsive, more stressed, more distant.",question:"How do you handle it?",answers:[{text:"You keep showing up without making them feel guilty for not being able to reciprocate right now",points:4,lang:"change"},{text:"You check in to make sure they know the door is open, no pressure attached",points:4,lang:"words"},{text:"You give them space and trust they will resurface when they are ready",points:2,lang:"none"},{text:"You feel a little neglected and honestly miss them, but you know they will come back around when they are ready",points:1,lang:"none"}]},{scenario:"There is a family decision that affects everyone and opinions are divided. You and your sibling do not fully agree.",question:"What do you do?",answers:[{text:"You talk it through privately first so you can go into family conversations aligned even if not identical",points:4,lang:"time"},{text:"You try to find where you actually agree and lead with that before getting into the differences",points:4,lang:"change"},{text:"You defer to your sibling because family peace genuinely matters more to you than being right",points:3,lang:"words"},{text:"You each say your piece in the family discussion and let the chips fall",points:2,lang:"none"}]},{scenario:"Your sibling has a real win. Something they have been working toward or that genuinely changed their life.",question:"How do you show up for it?",answers:[{text:"You do something intentional to mark it because a message alone is not enough for something this big",points:4,lang:"service"},{text:"You celebrate them as loudly and publicly as they want, this is their moment",points:3,lang:"words"},{text:"You congratulate them warmly and let them set the tone for how much they want to make of it",points:3,lang:"time"},{text:"You send a genuine congratulations and mean every word even if you keep it simple",points:2,lang:"none"}]},{scenario:"It has been too long since you and your sibling have had a real conversation. Not logistics, not family updates, just actually checking in.",question:"What happens?",answers:[{text:"You reach out because you do not want to be the sibling who only calls when something is wrong",points:4,lang:"change"},{text:"You text something low stakes that reopens the door without making it feel heavy",points:3,lang:"words"},{text:"You think about it, feel a little guilty, and tell yourself you will do it soon",points:2,lang:"none"},{text:"You wait because you feel like you are always the one reaching out and you do not want to be a pest",points:1,lang:"none"}]}]};
+// ===== NEW QUESTIONS v3 - LOCKED =====
+var ALL_QUESTIONS={
+  couple:[
+    {question:"Date night just started. My phone is...",answers:[
+      {text:"On silent, screen down on the table.",points:3,lang:"time"},
+      {text:"In my hand. I'm unwinding.",points:1,lang:"none"},
+      {text:"In the other room.",points:4,lang:"time"},
+      {text:"In my pocket. I'll glance if it buzzes.",points:2,lang:"none"}
+    ]},
+    {question:"On the couch together, I'm...",answers:[
+      {text:"Close, but a respectable cushion-width apart.",points:2,lang:"none"},
+      {text:"Already leaning into them.",points:4,lang:"touch"},
+      {text:"On the other end. We like our space.",points:1,lang:"none"},
+      {text:"Hand on their leg without thinking about it.",points:3,lang:"touch"}
+    ]},
+    {question:"Last time I told them \"I'm proud of you\" and meant it...",answers:[
+      {text:"Sometime this month.",points:2,lang:"none"},
+      {text:"They know how I feel.",points:1,lang:"none"},
+      {text:"Today. I say it like it's the weather.",points:4,lang:"words"},
+      {text:"This week, and I remember exactly why.",points:3,lang:"words"}
+    ]},
+    {question:"They mentioned the kitchen sink is leaking. As of right now...",answers:[
+      {text:"We'll deal with it together this weekend.",points:2,lang:"none"},
+      {text:"I looked up a plumber and texted them options.",points:3,lang:"service"},
+      {text:"It's already fixed before they got home.",points:4,lang:"service"},
+      {text:"I've had a lot on my plate, hopefully they handle it.",points:1,lang:"none"}
+    ]},
+    {question:"I'm at a coffee shop without them. I...",answers:[
+      {text:"Grab myself a drink. They hate coffee.",points:2,lang:"none"},
+      {text:"Text them and ask if/what they want.",points:3,lang:"gifts"},
+      {text:"Order mine and their exact order to bring home.",points:4,lang:"gifts"},
+      {text:"Grab them a pastry, jic.",points:1,lang:"none"}
+    ]},
+    {question:"They had a hard day. I...",answers:[
+      {text:"Send a \"thinking of you\" text mid-day.",points:2,lang:"words"},
+      {text:"Make space after dinner to actually hear them out.",points:3,lang:"time"},
+      {text:"Give them space. They'll come to me when they're ready.",points:1,lang:"none"},
+      {text:"Cancel my plans. No phone. Just there.",points:4,lang:"time"}
+    ]},
+    {question:"They told me something I do bothers them. Two weeks later...",answers:[
+      {text:"I changed the behavior, quietly. I think they noticed.",points:3,lang:"words"},
+      {text:"I'm working on it. Some days are better than others.",points:2,lang:"none"},
+      {text:"I bring it up first. \"Hey, am I doing better?\"",points:4,lang:"words"},
+      {text:"I want to do better and it's top of mind.",points:1,lang:"none"}
+    ]},
+    {question:"Walking through a parking lot together, I...",answers:[
+      {text:"Walk by their side.",points:2,lang:"none"},
+      {text:"Brush their back as I pass behind them to get to the car.",points:3,lang:"touch"},
+      {text:"Walk a few steps ahead. I tend to walk faster.",points:1,lang:"none"},
+      {text:"Reach for their hand without thinking.",points:4,lang:"touch"}
+    ]},
+    {question:"Sunday morning. They're still asleep. I'm...",answers:[
+      {text:"Sleeping in too. We earned it.",points:2,lang:"none"},
+      {text:"Up doing my own thing.",points:1,lang:"none"},
+      {text:"Quietly handling something on our to-do list.",points:3,lang:"service"},
+      {text:"Making their coffee or breakfast the way they like it.",points:4,lang:"service"}
+    ]},
+    {question:"Their birthday is in 3 weeks. I...",answers:[
+      {text:"Have an idea I've been quietly working on.",points:3,lang:"gifts"},
+      {text:"Already have their present. Have for a month.",points:4,lang:"gifts"},
+      {text:"Am listening to hear what they might want or like.",points:2,lang:"gifts"},
+      {text:"They're tricky to shop for, so I always do a gc.",points:1,lang:"none"}
+    ]},
+    {question:"I messed up. They're hurt. My move?",answers:[
+      {text:"I sit with them and say exactly what I got wrong, out loud.",points:3,lang:"words"},
+      {text:"I give them space to cool off.",points:1,lang:"none"},
+      {text:"I apologize and change the thing. No further discussion needed.",points:4,lang:"service"},
+      {text:"I explain why it happened so they understand where I was coming from.",points:2,lang:"none"}
+    ]}
+  ],
+  friends:[
+    {question:"They texted asking if I'm free Saturday. I...",answers:[
+      {text:"Said I'd check and circle back.",points:2,lang:"none"},
+      {text:"Told them I'm slammed but free the week after.",points:1,lang:"none"},
+      {text:"Already said yes. We'll figure out what later.",points:4,lang:"time"},
+      {text:"Asked what's up before committing.",points:3,lang:"time"}
+    ]},
+    {question:"They walk into the room. My greeting is...",answers:[
+      {text:"A wave and a \"hey!\" from across the room.",points:2,lang:"none"},
+      {text:"A side hug or a hand on the shoulder.",points:3,lang:"touch"},
+      {text:"Big smile. I'm not really a hugger.",points:1,lang:"none"},
+      {text:"A real hug. The kind you actually feel.",points:4,lang:"touch"}
+    ]},
+    {question:"Last time I told them they're a great friend, out loud...",answers:[
+      {text:"This week. I tell them often.",points:4,lang:"words"},
+      {text:"We don't really do the mushy stuff.",points:1,lang:"none"},
+      {text:"It's been a while, but it's understood.",points:2,lang:"none"},
+      {text:"Recently, in a moment that called for it.",points:3,lang:"words"}
+    ]},
+    {question:"They asked for a real favor. The kind that costs me a Saturday. I...",answers:[
+      {text:"Helped with part of it, as much as I could manage.",points:2,lang:"none"},
+      {text:"Said yes, then figured out how to make it work.",points:3,lang:"service"},
+      {text:"Couldn't this time. I already had plans.",points:1,lang:"none"},
+      {text:"Said yes before they finished asking.",points:4,lang:"service"}
+    ]},
+    {question:"They mentioned a book/show/restaurant they'd love. Months ago. I...",answers:[
+      {text:"It rang a bell next time the topic came up.",points:2,lang:"none"},
+      {text:"Wrote it down. It's in my notes app for later.",points:3,lang:"gifts"},
+      {text:"Admire that they're always looking at new things to try.",points:1,lang:"none"},
+      {text:"Already gave it to them as a \"saw this and thought of you.\"",points:4,lang:"gifts"}
+    ]},
+    {question:"They've been harder to reach lately. I...",answers:[
+      {text:"Send a low-stakes \"thinking of you\" with no pressure.",points:3,lang:"words"},
+      {text:"Pull back a little. I want to give them room.",points:1,lang:"none"},
+      {text:"Meet them where they're at.",points:2,lang:"none"},
+      {text:"Keep showing up at my normal level. They'll surface.",points:4,lang:"time"}
+    ]},
+    {question:"Someone subtly threw them under the bus in a group setting. I...",answers:[
+      {text:"Noted it. Let them lead on how to handle it.",points:2,lang:"none"},
+      {text:"Said something in the moment. Light, but clear.",points:4,lang:"words"},
+      {text:"Read the room. They didn't seem fazed.",points:1,lang:"none"},
+      {text:"Checked in with them after to make sure they're okay.",points:3,lang:"words"}
+    ]},
+    {question:"At a big celebration of theirs, when it really hits...",answers:[
+      {text:"I squeeze their arm so they know I see them.",points:3,lang:"touch"},
+      {text:"I cheers them across the table.",points:2,lang:"none"},
+      {text:"I pull them in for a real hug.",points:4,lang:"touch"},
+      {text:"I let them have their moment.",points:1,lang:"none"}
+    ]},
+    {question:"They had a rough day. I'm two miles away. I...",answers:[
+      {text:"Send them DoorDash.",points:2,lang:"gifts"},
+      {text:"Show up at their place with food.",points:4,lang:"service"},
+      {text:"Text them, \"here if you need anything.\"",points:1,lang:"none"},
+      {text:"Call and stay on the phone as long as they want.",points:3,lang:"time"}
+    ]},
+    {question:"Their birthday is in two weeks. I...",answers:[
+      {text:"Am still thinking about what to do.",points:1,lang:"none"},
+      {text:"Have an idea I'm currently working on.",points:3,lang:"gifts"},
+      {text:"Already have their gift.",points:4,lang:"gifts"},
+      {text:"Will send a venmo or gift card with a sweet note.",points:2,lang:"none"}
+    ]},
+    {question:"It's been three weeks since we actually talked. Who reaches out?",answers:[
+      {text:"Whoever notices first. We always trade off.",points:2,lang:"none"},
+      {text:"Me. I always reach out, and I don't keep score.",points:4,lang:"service"},
+      {text:"Me, with a \"hey, it's been too long\" and I make plans.",points:3,lang:"words"},
+      {text:"They have lots going on. They'll text when life slows down.",points:1,lang:"none"}
+    ]}
+  ],
+  siblings:[
+    {question:"Last time we hung out, just us, no parents/spouses/kids...",answers:[
+      {text:"It's been a minute. We text more than we hang.",points:1,lang:"none"},
+      {text:"Within the last month. We make it happen.",points:4,lang:"time"},
+      {text:"A few months back. Felt like no time passed.",points:3,lang:"time"},
+      {text:"We catch up at family stuff. That counts.",points:2,lang:"none"}
+    ]},
+    {question:"They walk by where I'm sitting. I...",answers:[
+      {text:"Glance up and say something to chirp them.",points:2,lang:"none"},
+      {text:"Stick out a foot to trip them. They expect it.",points:4,lang:"touch"},
+      {text:"Don't even look up.",points:1,lang:"none"},
+      {text:"Flick the back of their head as they pass.",points:3,lang:"touch"}
+    ]},
+    {question:"Last time I told them I'm proud of them, sincerely...",answers:[
+      {text:"Recently. They needed to hear it and I said it.",points:3,lang:"words"},
+      {text:"We've never really been a \"feelings out loud\" family.",points:1,lang:"none"},
+      {text:"This week. I make a point of telling them.",points:4,lang:"words"},
+      {text:"Honestly, I think they know.",points:2,lang:"none"}
+    ]},
+    {question:"They asked for help with something annoying, like moving. I...",answers:[
+      {text:"Helped with the easy part. They handled the rest.",points:2,lang:"none"},
+      {text:"Said yes, asked when.",points:3,lang:"service"},
+      {text:"Gave them money to handle it themselves.",points:1,lang:"none"},
+      {text:"Showed up before they finished asking.",points:4,lang:"service"}
+    ]},
+    {question:"Their birthday or holiday gift this year was...",answers:[
+      {text:"A gift card. Easier and they get what they want.",points:2,lang:"none"},
+      {text:"Specific to them. I'd been thinking about it for a while.",points:4,lang:"gifts"},
+      {text:"I got them a card and showed up to their party.",points:1,lang:"none"},
+      {text:"Something I knew they'd actually use.",points:3,lang:"gifts"}
+    ]},
+    {question:"They called out of the blue, no reason. I...",answers:[
+      {text:"Picked up. We caught up for a few minutes.",points:3,lang:"time"},
+      {text:"Saw the call, will call them back this weekend.",points:1,lang:"none"},
+      {text:"Couldn't pick up. Called back when I could.",points:2,lang:"none"},
+      {text:"Picked up immediately. We talked for an hour.",points:4,lang:"time"}
+    ]},
+    {question:"Something is up with them. They haven't said it. I...",answers:[
+      {text:"Mentioned it casually, to give them an opening.",points:2,lang:"none"},
+      {text:"Asked them straight up. We don't tiptoe.",points:4,lang:"words"},
+      {text:"Figure they'll bring it up if it's a big deal.",points:1,lang:"none"},
+      {text:"Texted, \"you good? talk if you want.\"",points:3,lang:"words"}
+    ]},
+    {question:"At a family dinner, sitting next to them...",answers:[
+      {text:"I bump my shoulder into theirs to share a look.",points:3,lang:"touch"},
+      {text:"I sit close enough but don't bug them.",points:2,lang:"none"},
+      {text:"I steal a bite off their plate without asking.",points:4,lang:"touch"},
+      {text:"I picked the seat across the table. Better to make faces at them.",points:1,lang:"none"}
+    ]},
+    {question:"They're moving. Or in some other \"real\" bind. I...",answers:[
+      {text:"Send them a venmo to help. They've got this.",points:2,lang:"none"},
+      {text:"Helped for a few hours when I could swing it.",points:3,lang:"service"},
+      {text:"Took the day off. Showed up with my truck/coffee/snacks.",points:4,lang:"service"},
+      {text:"Sent a message to check in and see how it's going.",points:1,lang:"none"}
+    ]},
+    {question:"They mentioned wanting something months ago. I...",answers:[
+      {text:"Wrote it down for their next birthday.",points:3,lang:"gifts"},
+      {text:"It came up again and I joked about it.",points:2,lang:"none"},
+      {text:"Don't really remember them mentioning it.",points:1,lang:"none"},
+      {text:"Surprised them with it. They forgot they ever said it.",points:4,lang:"gifts"}
+    ]},
+    {question:"We had a real disagreement. Two days later, I...",answers:[
+      {text:"Texted something normal to break the ice.",points:3,lang:"words"},
+      {text:"Reached out first. Family stuff isn't worth dragging out.",points:4,lang:"service"},
+      {text:"Waiting for them to apologize first. They were wrong.",points:1,lang:"none"},
+      {text:"Gave us both space. We always work it out eventually.",points:2,lang:"none"}
+    ]}
+  ]
+};
 
 var LABEL_CONFIG={couple:{levels:["Devoted Lover","All-in Lover","Warm Lover","Consistent Lover","Love in Progress"]},friends:{levels:["Devoted Friend","All-in Friend","Warm Friend","Consistent Friend","Friend in Progress"]},siblings:{levels:["Devoted Sibling","All-in Sibling","Warm Sibling","Consistent Sibling","Sibling in Progress"]}};
 var TIER_LINES=["Top 13% of scores","Top 30% of scores","Top 55% of scores","Top 75% of scores","Room to grow"];
-var LANG_LABELS={gifts:'Thoughtful gifter',words:'Words and communication',time:'Quality time and presence',service:'Acts of service',change:'Behavioral investment',none:'Quiet and steady'};
-var LANG_FULL={gifts:'giving thoughtful gifts',words:'open communication and words',time:'quality time and presence',service:'acts of service',change:'showing up and following through'};
+
+// ===== NEW LANG SYSTEM - touch is first-class, change is removed =====
+// Mode-aware label functions
+function getLangLabel(lang){
+  if(lang==='touch'){
+    if(mode==='couple')return'Physical touch';
+    if(mode==='friends')return'Physical warmth';
+    return'Sibling closeness';
+  }
+  var labels={gifts:'Thoughtful gifter',words:'Words and communication',time:'Quality time and presence',service:'Acts of service',none:'Quiet and steady'};
+  return labels[lang]||'Showing up consistently';
+}
+function getLangFull(lang){
+  if(lang==='touch'){
+    if(mode==='couple')return'physical touch and closeness';
+    if(mode==='friends')return'physical warmth and presence';
+    return'sibling closeness';
+  }
+  var full={gifts:'giving thoughtful gifts',words:'open communication and words',time:'quality time and presence',service:'acts of service',none:'showing up consistently'};
+  return full[lang]||'showing up consistently';
+}
 
 var THEMES={
-  couple:{accent:'#D4537E',bg:'#fbeaf0',btnCls:'couple-btn',turnCls:'couple-turn',progCls:'couple-prog',scenarioCls:'couple-scenario',cardCls:['couple-card-a','couple-card-b'],pillCls:'couple-pill',ansCls:'couple-ans',locCls:'couple-loc',countCls:'couple-count',emoji:'🩷',labels:['You','Your person'],fomoTag:'🔥 Your friends need to see this',maxPlayers:2,shareGrad:'linear-gradient(135deg,#D4537E,#993556)',shareName:'Couple'},
-  friends:{accent:'#c9a000',bg:'#fffde6',btnCls:'friends-btn',turnCls:'friends-turn',progCls:'friends-prog',scenarioCls:'friends-scenario',cardCls:['friends-card-a','friends-card-b'],pillCls:'friends-pill',ansCls:'friends-ans',locCls:'friends-loc',countCls:'friends-count',emoji:'💛',labels:['Friend A','Friend B'],fomoTag:'👀 The group chat is about to find out',maxPlayers:6,shareGrad:'linear-gradient(135deg,#c9a000,#8a6500)',shareName:'Friends'},
-  siblings:{accent:'#378ADD',bg:'#E6F1FB',btnCls:'siblings-btn',turnCls:'siblings-turn',progCls:'siblings-prog',scenarioCls:'siblings-scenario',cardCls:['siblings-card-a','siblings-card-b'],pillCls:'siblings-pill',ansCls:'siblings-ans',locCls:'siblings-loc',countCls:'siblings-count',emoji:'💙',labels:['Sibling A','Sibling B'],fomoTag:'👫 The family chat needs to see this',maxPlayers:6,shareGrad:'linear-gradient(135deg,#378ADD,#185FA5)',shareName:'Siblings'}
+  couple:{accent:'#D4537E',bg:'#fbeaf0',btnCls:'couple-btn',turnCls:'couple-turn',progCls:'couple-prog',cardCls:['couple-card-a','couple-card-b'],pillCls:'couple-pill',ansCls:'couple-ans',locCls:'couple-loc',countCls:'couple-count',emoji:'🩷',labels:['You','Your person'],fomoTag:'🔥 Your friends need to see this',maxPlayers:2,shareGrad:'linear-gradient(135deg,#D4537E,#993556)',shareName:'Couple'},
+  friends:{accent:'#c9a000',bg:'#fffde6',btnCls:'friends-btn',turnCls:'friends-turn',progCls:'friends-prog',cardCls:['friends-card-a','friends-card-b'],pillCls:'friends-pill',ansCls:'friends-ans',locCls:'friends-loc',countCls:'friends-count',emoji:'💛',labels:['Friend A','Friend B'],fomoTag:'👀 The group chat is about to find out',maxPlayers:4,shareGrad:'linear-gradient(135deg,#c9a000,#8a6500)',shareName:'Friends'},
+  siblings:{accent:'#378ADD',bg:'#E6F1FB',btnCls:'siblings-btn',turnCls:'siblings-turn',progCls:'siblings-prog',cardCls:['siblings-card-a','siblings-card-b'],pillCls:'siblings-pill',ansCls:'siblings-ans',locCls:'siblings-loc',countCls:'siblings-count',emoji:'💙',labels:['Sibling A','Sibling B'],fomoTag:'👫 The family chat needs to see this',maxPlayers:4,shareGrad:'linear-gradient(135deg,#378ADD,#185FA5)',shareName:'Siblings'}
 };
 
 var mode='couple',quizLocation=null,playerCount=2,playerNames=[],playerPhones=[];
-var playerSurveys=[]; // array of survey objects per player
+var playerSurveys=[];
 var currentPlayer=0,currentQ=0,scores=[],langTotals=[],selectedIdx=null,QUESTIONS=[],playerAnswers=[];
 var currentSurvey={};
 
@@ -557,7 +759,7 @@ function selPlayerCount(n){
 }
 
 function buildNamesGrid(){
-  var th=t(),grid=document.getElementById('names-grid');grid.innerHTML='';
+  var grid=document.getElementById('names-grid');grid.innerHTML='';
   var alpha=['A','B','C','D','E','F','G','H'];
   var coupleLabels=['You','Your person'];
   var couplePlaceholders=['Your name','Their name'];
@@ -635,8 +837,8 @@ function startQuiz(){
   playerSurveys=playerNames.map(function(){return {};});
   currentSessionId=null;
   if(pollingInterval){clearInterval(pollingInterval);pollingInterval=null;}
-  var qCount=playerCount<=2?11:playerCount<=4?9:7;
-  QUESTIONS=ALL_QUESTIONS[mode].map(function(q){return{scenario:q.scenario,question:q.question,answers:shuffle(q.answers)};}).slice(0,qCount);
+  var qCount=playerCount<=2?11:9;
+  QUESTIONS=ALL_QUESTIONS[mode].map(function(q){return{question:q.question,answers:shuffle(q.answers)};}).slice(0,qCount);
   currentPlayer=0;currentQ=0;selectedIdx=null;
   showPlayerSurvey();
 }
@@ -650,7 +852,6 @@ function showPlayerSurvey(){
   var snb=document.getElementById('survey-next-btn');
   ['couple-btn','friends-btn','siblings-btn'].forEach(function(c){snb.classList.remove(c);});snb.classList.add(th.btnCls);
   snb.classList.add('btn-disabled');snb.style.opacity='0.4';
-  // Apply theme color to the name
   if(nameEl)nameEl.style.color=th.accent;
   buildSurveyScreen();
   showScreen('s-survey');
@@ -686,9 +887,9 @@ function startPlayerQuiz(){
   var snb=document.getElementById('survey-next-btn');
   if(snb.classList.contains('btn-disabled'))return;
   playerSurveys[currentPlayer]=currentSurvey;
-  // Reset this player's score and lang totals
   scores[currentPlayer]=0;
-  langTotals[currentPlayer]={time:0,words:0,service:0,gifts:0,change:0,none:0};
+  // NEW lang totals - touch instead of change
+  langTotals[currentPlayer]={time:0,words:0,service:0,gifts:0,touch:0,none:0};
   playerAnswers[currentPlayer]={};
   applyThemeQuiz();showScreen('s-quiz');renderQ();
   document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth'});
@@ -698,11 +899,8 @@ function applyThemeQuiz(){
   var th=t();
   var swBtn=function(id){var el=document.getElementById(id);if(!el)return;['couple-btn','friends-btn','siblings-btn'].forEach(function(c){el.classList.remove(c);});el.classList.add(th.btnCls);};
   swBtn('next-btn');swBtn('play-again-btn');
-  // prog-fill removed - using progress-fill instead
   var tb=document.getElementById('turn-badge');
   ['couple-turn','friends-turn','siblings-turn'].forEach(function(c){tb.classList.remove(c);});tb.classList.add(th.turnCls);
-  var sb=document.getElementById('scenario-box');
-  ['couple-scenario','friends-scenario','siblings-scenario'].forEach(function(c){sb.classList.remove(c);});sb.classList.add(th.scenarioCls);
 }
 
 function renderQ(){
@@ -714,7 +912,6 @@ function renderQ(){
   document.getElementById('q-num').textContent='Question '+(currentQ+1)+' of '+QUESTIONS.length;
   var fill=document.getElementById('progress-fill');
   if(fill)fill.style.width=Math.max(9,Math.round((currentQ+1)/QUESTIONS.length*100))+'%';
-  document.getElementById('scenario-box').textContent=q.scenario;
   document.getElementById('q-text').textContent=q.question;
   var letters=['A','B','C','D','E'],ac=document.getElementById('answers');ac.innerHTML='';
   q.answers.forEach(function(ans,i){
@@ -732,22 +929,6 @@ function pickAnswer(btn,idx){
   selectedIdx=idx;document.getElementById('next-btn').style.display='inline-block';
 }
 
-function prevQ(){
-  if(currentQ===0)return;
-  currentQ--;
-  // Restore previous answer
-  selectedIdx=playerAnswers[currentPlayer]&&playerAnswers[currentPlayer][currentQ]!==undefined
-    ?playerAnswers[currentPlayer][currentQ]:null;
-  renderQ();
-  // Re-enable next button if answer exists
-  var nb=document.getElementById('next-btn');
-  if(selectedIdx!==null){
-    nb.classList.remove('btn-disabled');nb.style.opacity='1';
-  } else {
-    nb.classList.add('btn-disabled');nb.style.opacity='0.4';
-  }
-}
-
 function nextQ(){
   if(selectedIdx===null)return;
   var ans=QUESTIONS[currentQ].answers[selectedIdx];
@@ -755,9 +936,7 @@ function nextQ(){
   langTotals[currentPlayer][ans.lang]=(langTotals[currentPlayer][ans.lang]||0)+1;
   if(currentQ<QUESTIONS.length-1){currentQ++;renderQ();}
   else{
-    // player done
     if(quizLocation==='distance'){
-      // Long distance: each player only does their own turn then stops
       if(currentSessionId){
         fetch('/api/submit-response',{
           method:'POST',
@@ -778,10 +957,8 @@ function nextQ(){
         showWaiting();
       }
     } else if(currentPlayer<playerNames.length-1){
-      // Same room: pass to next player
       showHandoff();
     } else {
-      // Same room: all done, show results
       showResults();
     }
   }
@@ -796,12 +973,10 @@ function showHandoff(){
   var nameEl=document.getElementById('handoff-next-name');
   nameEl.textContent=nextName+"'s Turn";
   nameEl.style.color=th.accent;
-  document.getElementById('handoff-sub').textContent='Pick up the phone and hit the button when you are ready. Your answers are completely private.';
+  document.getElementById('handoff-sub').textContent='Pick up the phone and hit the button when you are ready. 🤙 Pinky promise to answer honestly.';
   var hbtn=document.getElementById('handoff-btn');
   ['couple-btn','friends-btn','siblings-btn'].forEach(function(c){hbtn.classList.remove(c);});hbtn.classList.add(th.btnCls);
   hbtn.textContent="I'm "+nextName+" — let's go 👊";
-  var hw=document.querySelector('.handoff-wrap');
-  hw.style.background='#fff';
   showScreen('s-handoff');
   document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth'});
 }
@@ -818,7 +993,6 @@ function showWaitingComplete(){
   wrap.style.cssText='text-align:center;padding:24px;background:#f0fdf4;border-radius:14px;border:1.5px solid #bbf7d0';
   wrap.innerHTML='<div style="font-size:36px;margin-bottom:10px">✅</div><div style="font-size:20px;font-weight:800;color:#166534;margin-bottom:8px">You are done!</div><div style="font-size:14px;color:#166534;line-height:1.6">Your answers have been submitted. You will get a text with the full results as soon as everyone else finishes.</div>';
   lc.appendChild(wrap);
-  // Keep polling
   if(currentSessionId)startPolling(currentSessionId);
 }
 
@@ -831,7 +1005,6 @@ function showWaiting(){
   var lc=document.getElementById('links-container');
   lc.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:10px">⏳</div><div style="font-size:16px;font-weight:700;color:#111">Creating your session...</div><div style="font-size:13px;color:#888;margin-top:6px">Generating unique links and texting everyone now</div></div>';
 
-  // Format phone numbers to E.164 before sending
   var formattedPhones = playerPhones.map(function(p){
     if(!p)return '';
     var digits=p.replace(/\D/g,'');
@@ -840,7 +1013,6 @@ function showWaiting(){
     return '+'+digits;
   });
 
-  // Call the create-session API
   fetch('/api/create-session', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -858,13 +1030,11 @@ function showWaiting(){
     currentSessionId=data.sessionId;
     lc.innerHTML='';
 
-    // Hide static title and sub since we show personalized version
     var wt=document.getElementById('waiting-title');
     var ws=document.getElementById('waiting-sub');
     if(wt)wt.style.display='none';
     if(ws)ws.style.display='none';
 
-    // Build personalized done screen
     var otherNames=playerNames.slice(1);
     var othersText=otherNames.length===1?otherNames[0]:otherNames.slice(0,-1).join(', ')+' and '+otherNames[otherNames.length-1];
 
@@ -877,7 +1047,6 @@ function showWaiting(){
       +'<div style="font-size:12px;color:#aaa;margin-top:8px">Everyone gets texted at the same time when the last person submits.</div>';
     lc.appendChild(doneWrap);
 
-    // Backup links in case texts are delayed
     var backupWrap=document.createElement('div');
     backupWrap.style.cssText='margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f0';
     var backupLabel=document.createElement('div');
@@ -886,7 +1055,7 @@ function showWaiting(){
     backupWrap.appendChild(backupLabel);
 
     playerNames.forEach(function(name,i){
-      if(i===0)return; // skip Player 1
+      if(i===0)return;
       var link='https://www.ilymquiz.com/quiz?session='+data.sessionId+'&player='+i;
       var wrap=document.createElement('div');wrap.style.marginBottom='10px';
       var box=document.createElement('div');box.className='link-box';box.style.fontSize='11px';box.textContent=link;
@@ -898,7 +1067,6 @@ function showWaiting(){
     });
     lc.appendChild(backupWrap);
 
-    // Start polling for completion
     startPolling(data.sessionId);
   })
   .catch(function(err){
@@ -918,10 +1086,8 @@ function startPolling(sessionId){
       if(data.allDone){
         clearInterval(pollingInterval);
         pollingInterval=null;
-        // Show results from API data
         showResultsFromAPI(data);
       } else {
-        // Update pending status
         var statusEl=document.getElementById('poll-status');
         if(statusEl){
           statusEl.textContent=data.submittedCount+' of '+data.totalPlayers+' completed';
@@ -929,12 +1095,10 @@ function startPolling(sessionId){
       }
     })
     .catch(function(err){console.log('Polling error:',err);});
-  }, 5000); // poll every 5 seconds
+  }, 5000);
 }
 
 function showResultsFromAPI(data){
-  // Use API leaderboard data to show results
-  // Override scores and langTotals with API data
   var apiRanked=data.leaderboard;
   scores=playerNames.map(function(n,i){
     var match=apiRanked.find(function(r){return r.playerIndex===i;});
@@ -959,17 +1123,17 @@ function showResults(){
   var isGroup=playerNames.length>2;
   var isTie=!isGroup&&ranked[0].score===ranked[1].score;
 
-  // WINNER
   var wd=document.getElementById('winner-display');
   if(isTie){
     wd.innerHTML='<div class="winner-tie-box"><div class="winner-tie-emoji">'+th.emoji+th.emoji+'</div><div class="winner-tie-title">It is basically a tie.</div><div class="winner-tie-sub">'+ranked[0].name+' and '+ranked[1].name+' love each other about equally — the best possible outcome.</div></div>';
   } else {
     var w=ranked[0];
     var sub=isGroup?'Top score with '+w.pct+'% — the official winner.':'The quiz has spoken. '+(ranked[1]?ranked[1].name+', you have some catching up to do.':'');
-    wd.innerHTML='<div class="winner-gold-box"><div class="winner-gold-inner"><div class="winner-gold-shine"></div><div class="winner-gold-label">Official Result</div><div class="winner-trophy">🏆</div><div class="winner-gold-title">'+w.name+(mode==='friends'?' is the better friend!':(mode==='siblings'?' is the better sibling!':' loves more!'))+'</div><div class="winner-gold-sub">'+sub+'</div></div></div>';
+    var loserName=ranked[1]?ranked[1].name:'';
+    var winnerLine=mode==='friends'?w.name+' Is The Better Friend!':mode==='siblings'?w.name+' Is The Better Sibling!':w.name+' Loves '+loserName+' More!';
+    wd.innerHTML='<div class="winner-gold-box"><div class="winner-gold-inner"><div class="winner-gold-shine"></div><div class="winner-gold-label">Official Result</div><div class="winner-trophy">🏆</div><div class="winner-gold-title">'+winnerLine+'</div><div class="winner-gold-sub">'+sub+'</div></div></div>';
   }
 
-  // SCORES
   var sd=document.getElementById('score-display');sd.innerHTML='';
   if(isGroup){
     var lb=document.createElement('div');lb.className='leaderboard';
@@ -995,23 +1159,31 @@ function showResults(){
     sd.appendChild(sg);
   }
 
-  // INSIGHTS — unique per player, cross-referencing other players
+  // INSIGHTS
   var id=document.getElementById('insights-display');id.innerHTML='';
   var insightList=playerNames.map(function(n,i){return{name:n,score:scores[i],langs:langTotals[i],survey:playerSurveys[i],origIdx:i};});
 
-  // Love style personality lines — unique second sentence per style
-  var loveStyleLines={
-    time:{high:'{name} is deeply present — showing up without distraction is a real strength.',mid:'{name} values presence. The opportunity is in making that time more consistent and intentional.',low:'Quality time is where {name} could invest more. Showing up fully, even briefly, goes a long way.'},
-    words:{high:'Communicating with intention comes naturally to {name} — the words land because they are genuine.',mid:'{name} communicates well when it counts. The opportunity is in doing it more proactively.',low:'Words matter more than {name} might realize. One specific unprompted message can change the entire dynamic.'},
-    service:{high:'Acting before being asked is {name}s strongest move — and the people around them notice it.',mid:'{name} shows love through doing. The opportunity is in looking for moments to act before being asked.',low:'Acts of service are underused by {name}. Handling one thing without being asked signals love louder than words.'},
-    gifts:{high:'{name} pays attention to the small things people mention — and that attentiveness is a genuine form of love.',mid:'Remembering what matters to others is something {name} can lean into more.',low:'Thoughtfulness through gifts and gestures is an area where {name} has real room to grow.'},
-    change:{high:'Following through on change is where {name} invests most — and that kind of love is the hardest to fake.',mid:'{name} shows up most when there is something to commit to. Channeling that into behavioral change is the next step.',low:'The biggest unlock for {name} is behavioral follow-through. The doing is what actually gets noticed.'},
-    none:{high:'{name} shows up quietly and consistently. That steadiness is often what people appreciate most in hindsight.',mid:'Steady and consistent describes {name}. The opportunity is in making that consistency more visible.',low:'{name} has room to be more expressive. Small regular acts of showing up matter more than big occasional gestures.'}
-  };
-
+  // Mode-aware love style lines (touch varies by mode)
   function getStyleLine(styleName, scoreLevel, personName){
-    var lines=loveStyleLines[styleName]||loveStyleLines.none;
-    var line=lines[scoreLevel]||lines.mid;
+    var lines={
+      time:{high:'{name} is deeply present. Showing up without distraction is a real strength.',mid:'{name} values presence. The opportunity is in making that time more consistent and intentional.',low:'Quality time is where {name} could invest more. Showing up fully, even briefly, goes a long way.'},
+      words:{high:'Communicating with intention comes naturally to {name}. The words land because they are genuine.',mid:'{name} communicates well when it counts. The opportunity is in doing it more proactively.',low:'Words matter more than {name} might realize. One specific unprompted message can change the entire dynamic.'},
+      service:{high:'Acting before being asked is {name}\'s strongest move. The people around them notice it.',mid:'{name} shows love through doing. The opportunity is in looking for moments to act before being asked.',low:'Acts of service are underused by {name}. Handling one thing without being asked signals love louder than words.'},
+      gifts:{high:'{name} pays attention to the small things people mention. That attentiveness is a genuine form of love.',mid:'Remembering what matters to others is something {name} can lean into more.',low:'Thoughtfulness through gifts and gestures is an area where {name} has real room to grow.'},
+      none:{high:'{name} shows up quietly and consistently. That steadiness is often what people appreciate most in hindsight.',mid:'Steady and consistent describes {name}. The opportunity is in making that consistency more visible.',low:'{name} has room to be more expressive. Small regular acts of showing up matter more than big occasional gestures.'}
+    };
+    // Touch varies by mode
+    if(styleName==='touch'){
+      if(mode==='couple'){
+        lines.touch={high:'Physical closeness is where {name} naturally connects. The small touches add up more than they realize.',mid:'{name} expresses love through touch when the moment calls for it. Leaning into it more often deepens connection.',low:'Physical closeness is an underused tool for {name}. A hand held, a real hug, even sitting close, all count.'};
+      } else if(mode==='friends'){
+        lines.touch={high:'{name} brings real warmth in person. The hugs, the shoulder pats, the leaning in, all of it lands.',mid:'{name} shows up physically when it matters. A real greeting goes further than a wave.',low:'Physical warmth is something {name} could lean into more. A genuine hug says what words cannot.'};
+      } else {
+        lines.touch={high:'{name} shows up the way only siblings can. The chirps, the nudges, the bites stolen off plates, that is love.',mid:'{name} keeps the sibling code alive in their own way. Lean into it. The dynamic is the love.',low:'The sibling shorthand of casual closeness is something {name} could use more. The small jabs are how you say I love you.'};
+      }
+    }
+    var entry=lines[styleName]||lines.none;
+    var line=entry[scoreLevel]||entry.mid;
     return line.replace(/\{name\}/g, personName);
   }
 
@@ -1019,26 +1191,25 @@ function showResults(){
     var card=document.createElement('div');card.className='insight-card';
     var tl=topLang(p.langs);
     var ll=lowestLang(p.langs);
-    var styleLabel=LANG_LABELS[tl]||'Showing up consistently';
+    var styleLabel=getLangLabel(tl);
     var pr=pct(p.score);
     var scoreLevel=pr>=87?'high':pr>=55?'mid':'low';
 
-    // Layer 1: base summary varies slightly by score AND position in group
     var baseMap={
       87:["is deeply intentional about love. The consistency here is real and it shows in every small decision.",
           "has built something meaningful through consistent investment. The care is visible and it runs deep.",
-          "brings a level of intentionality that stands out. The small things add up — and they have."],
+          "brings a level of intentionality that stands out. The small things add up, and they have."],
       70:["shows up with genuine care and real effort. The foundation is strong and the intention is clearly there.",
           "invests with real heart. The effort is consistent and the people around them feel it.",
-          "brings steady, reliable love. Not flashy — just real, and that matters more than most people admit."],
-      55:["has real warmth and genuine care. The love is there — the opportunity is in showing it more consistently.",
+          "brings steady, reliable love. Not flashy, just real, and that matters more than most people admit."],
+      55:["has real warmth and genuine care. The love is there. The opportunity is in showing it more consistently.",
           "cares deeply and it comes through in moments. The next step is making those moments more frequent.",
           "has all the right instincts. Turning them into habits is where the real growth happens."],
       40:["has a solid foundation to build from. Love is present even if it does not always land the way others notice.",
           "shows love in their own way. The opportunity is in learning which ways the people around them actually feel it.",
           "has genuine care underneath. The gap is usually between how they feel it and how they show it."],
       0:["may express love in ways this quiz does not fully capture, or there is real room to invest more intentionally.",
-         "scores lower here, but that does not mean the love is not there — it may mean it is not showing up in ways others recognize.",
+         "scores lower here, but that does not mean the love is not there. It may mean it is not showing up in ways others recognize.",
          "has the most room to grow, and the research is clear: small consistent acts make a bigger difference than occasional grand ones."]
     };
 
@@ -1047,53 +1218,49 @@ function showResults(){
     var variantIdx=p.origIdx%variants.length;
     var summary=p.name+' '+variants[variantIdx];
 
-    // Layer 2: love style specific second sentence
     var styleLine=getStyleLine(tl, scoreLevel, p.name);
     summary=summary+' '+styleLine;
 
     var improveHTML='';
     if(mode==='couple'){
-      // cross-reference the OTHER player's love language from their own survey
       var otherIdx=p.origIdx===0?1:0;
       var otherSurvey=playerSurveys[otherIdx]||{};
       var otherName=playerNames[otherIdx];
-      var llMap={'Words of affirmation':'words','Quality time':'time','Acts of service':'service','Gifts':'gifts','Physical touch':'change'};
+      // NEW: Physical touch maps to touch (first-class), not change
+      var llMap={'Words of affirmation':'words','Quality time':'time','Acts of service':'service','Gifts':'gifts','Physical touch':'touch'};
       var partnerPriority=llMap[otherSurvey.ll||'']||ll;
 
-      // unique tip per partner priority
       var tips={
-        words:{tip:otherName+' lights up with words. One specific message this week that names something you genuinely admire will land more than any gesture.',example:'Try: Text them today with one thing — not generic, but specific. Something they actually did this week that you noticed.'},
+        words:{tip:otherName+' lights up with words. One specific message this week that names something you genuinely admire will land more than any gesture.',example:'Try: Text them today with one thing, not generic, but specific. Something they actually did this week that you noticed.'},
         time:{tip:otherName+' values presence. Putting your phone down and being fully there speaks louder than anything you could say or do.',example:'Try: Block one screen-free hour this week that belongs entirely to the two of you. No half-presence.'},
         service:{tip:otherName+' notices when you handle things without being asked. One thing done before they bring it up means more than ten things done after.',example:'Try: Look at what they are carrying this week. Handle one thing from that list silently, before they mention it.'},
         gifts:{tip:otherName+' feels loved when you remember the small things they mention in passing. Paying attention is the real gift.',example:'Try: The next time they mention something they love or want, write it down. Act on it with no occasion required.'},
-        change:{tip:otherName+' is watching patterns, not gestures. Following through on something you said you would change matters more than any apology.',example:'Try: Pick one thing you know bothers them. Commit to it for two weeks without announcing it. Let them notice.'},
-        none:{tip:p.name+' has room to be more consistently expressive. Small daily acts build more lasting connection than occasional big ones.',example:'Try: One intentional act each day this week — a proper greeting, a real question, doing something without being asked.'}
+        touch:{tip:otherName+' connects through physical closeness. A hand on their back, sitting close, reaching for their hand without thinking. Small touches build connection more than grand gestures.',example:'Try: This week, find three small unprompted moments to touch them. A hand on the shoulder. A real hug. Sit close on the couch.'},
+        none:{tip:p.name+' has room to be more consistently expressive. Small daily acts build more lasting connection than occasional big ones.',example:'Try: One intentional act each day this week. A proper greeting, a real question, doing something without being asked.'}
       };
       var tipData=tips[partnerPriority]||tips.none;
       improveHTML='<div class="insight-improve-label">One way to love '+otherName+' better</div><div class="insight-improve">'+tipData.tip+'<div class="insight-improve-example">'+tipData.example+'</div></div>';
 
     } else if(mode==='friends'){
-      // personalized per player based on their own lowest area
-      var areaLabel=LANG_FULL[ll]||'showing up consistently';
+      var areaLabel=getLangFull(ll);
       var friendTips={
         time:'Make time a priority this month. A proper catch-up, not a quick text.',
         words:'Check in more intentionally. A real question, not just a reaction to their posts.',
         service:'Look for one small thing you can do for them before they ask.',
         gifts:'Remember the things they mention in passing and act on them.',
-        change:'Be the one to reach out first when things get quiet between you.',
-        none:'Show up more consistently — even small gestures go a long way.'
+        touch:'A real hug, a hand on the shoulder, actually being present in the room. Physical warmth says I see you.',
+        none:'Show up more consistently. Even small gestures go a long way.'
       };
       improveHTML='<div class="insight-improve-label">Biggest growth area</div><div class="insight-improve-group"><span class="improve-area-tag" style="background:'+th.accent+'22;color:'+th.accent+'">Can improve most in: '+areaLabel+'</span><br><br><span style="font-size:13px;color:#555">'+( friendTips[ll]||friendTips.none)+'</span></div>';
 
     } else {
-      // siblings
-      var areaLabelS=LANG_FULL[ll]||'showing up consistently';
+      var areaLabelS=getLangFull(ll);
       var sibTips={
-        time:'Make time for a real conversation this month — not logistics, just catching up.',
+        time:'Make time for a real conversation this month. Not logistics, just catching up.',
         words:'Check in more. A text out of nowhere that says you are thinking about them goes further than you think.',
         service:'Handle something for them before they ask. That is the sibling equivalent of showing up.',
         gifts:'Remember the small things they mention. Act on them without needing a reason.',
-        change:'Be the one who reaches out first when things get quiet. Do not wait for it to go both ways.',
+        touch:'Lean into the sibling code. A nudge, a chirp, a stolen bite off their plate. The casual closeness IS the love.',
         none:'Small consistent acts of showing up matter more than being there only for the big moments.'
       };
       improveHTML='<div class="insight-improve-label">Biggest growth area</div><div class="insight-improve-group"><span class="improve-area-tag" style="background:'+th.accent+'22;color:'+th.accent+'">Can improve most in: '+areaLabelS+'</span><br><br><span style="font-size:13px;color:#555">'+(sibTips[ll]||sibTips.none)+'</span></div>';
@@ -1114,13 +1281,8 @@ function showResults(){
     id.appendChild(card);
   });
 
-  // ACTIVITY SUGGESTION
   buildActivitySuggestion(ranked,isGroup);
-
-  // PRICING
   buildPricing();
-
-  // SHARE CARD
   buildShareCard(ranked,isGroup,isTie);
 }
 
@@ -1129,7 +1291,6 @@ function buildActivitySuggestion(ranked,isGroup){
   var ad=document.getElementById('activity-display');ad.innerHTML='';
   var n=playerNames.length;
 
-  // tally dominant love language across all players
   var langCount={};
   langTotals.forEach(function(lt){
     Object.keys(lt).forEach(function(k){
@@ -1140,45 +1301,46 @@ function buildActivitySuggestion(ranked,isGroup){
   var maxC=0;
   Object.keys(langCount).forEach(function(k){if(langCount[k]>maxC){maxC=langCount[k];domLang=k;}});
 
+  // NEW: touch entries replace change entries
   var activities={
     couple:{
-      time:{emoji:'🌅',title:'Golden Hour Date',desc:'Pick one evening this week with zero agenda. No phones, no plans — just time. Grab food, take a walk, sit somewhere you both like. The only rule is that you are fully present.',why:'The two of you score highest on presence. This is exactly what you are already good at — lean into it.'},
-      words:{emoji:'💌',title:'The Letter Exchange',desc:'Each of you writes the other a short letter — not a text, an actual letter. What you appreciate, what you notice, what you wish they heard more often. Exchange them next time you see each other.',why:'Words matter to both of you. This gives them the space to land properly.'},
+      time:{emoji:'🌅',title:'Golden Hour Date',desc:'Pick one evening this week with zero agenda. No phones, no plans, just time. Grab food, take a walk, sit somewhere you both like. The only rule is that you are fully present.',why:'The two of you score highest on presence. This is exactly what you are already good at, lean into it.'},
+      words:{emoji:'💌',title:'The Letter Exchange',desc:'Each of you writes the other a short letter, not a text, an actual letter. What you appreciate, what you notice, what you wish they heard more often. Exchange them next time you see each other.',why:'Words matter to both of you. This gives them the space to land properly.'},
       service:{emoji:'🍳',title:'Take Something Off Their Plate',desc:'Each of you picks one thing the other has been meaning to do and handles it this week, quietly, without announcement. See who notices first.',why:'Acts of service are how both of you express love. This turns it into a game.'},
       gifts:{emoji:'🎁',title:'The Memory Gift',desc:'Each of you thinks back to something the other mentioned wanting or loving in the last few months. Get it or plan it. No occasion required.',why:'You both show love by paying attention to details. Give it a reason to act.'},
-      change:{emoji:'🌱',title:'The 30 Day Check-in',desc:'Pick one thing each of you wants to do better for the other. Write it down. Check in with each other in 30 days on how it is going — no judgment, just honest conversation.',why:'You both invest most when there is something to commit to. Make it intentional.'},
+      touch:{emoji:'🤝',title:'The Closeness Challenge',desc:'For one week, find three small unprompted physical moments each day. A hand on the back, sitting close on the couch, reaching for their hand. No words required.',why:'You both connect through touch. Make it intentional and watch what shifts.'},
       none:{emoji:'📵',title:'No-Phone Hour',desc:'Pick one hangout this week, phones in another room, no talking about logistics or obligations. Just each other.',why:'Simple presence is underrated. Try it once and see what comes up.'}
     },
     friends_small:{
       time:{emoji:'🎭',title:'The Proper Plans',desc:'Actually commit to the thing you have both been saying you should do. Book it. Send the calendar invite. Stop saying "we should" and make it happen.',why:'Quality time is what both of you value most. You just need someone to actually book it.'},
-      words:{emoji:'🗣️',title:'The Voice Memo Exchange',desc:'Send each other a voice memo this week instead of a text. Something real — how you are actually doing, what has been on your mind.',why:'You both communicate best when it is genuine. Voice memos force that.'},
+      words:{emoji:'🗣️',title:'The Voice Memo Exchange',desc:'Send each other a voice memo this week instead of a text. Something real, how you are actually doing, what has been on your mind.',why:'You both communicate best when it is genuine. Voice memos force that.'},
       service:{emoji:'☕',title:'Show Up Unexpectedly',desc:'One of you does something for the other this week completely unprompted. Drop off coffee, handle a task they mentioned, show up when they did not ask.',why:'Acts of service are how you both say I see you. Use it.'},
-      gifts:{emoji:'📦',title:'The Care Package Challenge',desc:'Put together something small for each other — a playlist, a book, a snack, something you know they would love. No reason needed.',why:'You both pay attention to the details. This is a chance to show it.'},
-      change:{emoji:'🏃',title:'The Accountability Pact',desc:'Each of you names one thing you have been trying to do but keep dropping. Hold each other accountable for 30 days. Check in weekly.',why:'You both show up most when someone is counting on you. Use that.'},
+      gifts:{emoji:'📦',title:'The Care Package Challenge',desc:'Put together something small for each other, a playlist, a book, a snack, something you know they would love. No reason needed.',why:'You both pay attention to the details. This is a chance to show it.'},
+      touch:{emoji:'🤗',title:'The Real Hug Rule',desc:'Next time you see each other, no half-hugs or quick waves. A real hug, the kind that says you actually matter to me. Make it the new default.',why:'Physical warmth between friends is underused. You are both ready for it.'},
       none:{emoji:'🍕',title:'No-Agenda Night',desc:'Pick a night. Order food. No plans, no agenda. Just hang out the way you used to.',why:'Sometimes the best thing you can do is stop trying to make it special and just show up.'}
     },
     friends_large:{
-      time:{emoji:'🏐',title:'Group Outing',desc:'Plan a group activity that gets everyone off their phones — volleyball, bowling, mini golf, a hike, a cooking class. Something you have to actually be present for.',why:'The whole group scores highest on presence. Channel it.'},
+      time:{emoji:'🏐',title:'Group Outing',desc:'Plan a group activity that gets everyone off their phones, volleyball, bowling, mini golf, a hike, a cooking class. Something you have to actually be present for.',why:'The whole group scores highest on presence. Channel it.'},
       words:{emoji:'🃏',title:'We\'re Not Really Strangers Night',desc:'Get a conversation card deck or pull questions from a list online. No phones, no drinks required, just real questions and real answers.',why:'This group communicates naturally. Give it a structure and see what comes out.'},
-      service:{emoji:'🧹',title:'Group Help Day',desc:'Pick one person in the group who has something they need help with — a move, a project, a yard, a clean-out. Everyone shows up on the same day.',why:'Acts of service are how this group shows love. Channel it toward one person.'},
-      gifts:{emoji:'🎪',title:'Experience Gift Swap',desc:'Everyone brings something experiential — a suggestion, a voucher, a plan — for someone else in the group. Assign names in advance.',why:'Everyone pays attention to each other. This makes it official.'},
-      change:{emoji:'🏆',title:'Group Challenge',desc:'Pick a challenge everyone commits to for 30 days — a fitness goal, a reading goal, a creative project. Group chat for accountability, real celebration at the end.',why:'Everyone shows up most when there is something to commit to together.'},
+      service:{emoji:'🧹',title:'Group Help Day',desc:'Pick one person in the group who has something they need help with, a move, a project, a yard, a clean-out. Everyone shows up on the same day.',why:'Acts of service are how this group shows love. Channel it toward one person.'},
+      gifts:{emoji:'🎪',title:'Experience Gift Swap',desc:'Everyone brings something experiential, a suggestion, a voucher, a plan, for someone else in the group. Assign names in advance.',why:'Everyone pays attention to each other. This makes it official.'},
+      touch:{emoji:'🤗',title:'Real Greetings Night',desc:'Pick a night to all be in the same room. The rule: every greeting is a real one. A real hug, a real hello, eye contact. Worth the awkwardness.',why:'This group connects through warmth in person. Make the next gathering the proof.'},
       none:{emoji:'🎉',title:'The Group Hangout',desc:'Pick a date. Everyone shows up. No itinerary. The point is that you are all in the same room at the same time.',why:'Sometimes presence is the whole point.'}
     },
     siblings_small:{
-      time:{emoji:'🍜',title:'The Sibling Dinner',desc:'Block one evening — no partners, no kids, no phones on the table. Just the two of you catching up the way you used to before life got complicated.',why:'Quality time is what both of you value most. You just have to actually book it.'},
-      words:{emoji:'📞',title:'The Real Phone Call',desc:'Not a check-in call. An actual call with no agenda — just talking the way you used to. Block an hour. Call each other.',why:'You both communicate best when it is not rushed. Give it the time it deserves.'},
+      time:{emoji:'🍜',title:'The Sibling Dinner',desc:'Block one evening, no partners, no kids, no phones on the table. Just the two of you catching up the way you used to before life got complicated.',why:'Quality time is what both of you value most. You just have to actually book it.'},
+      words:{emoji:'📞',title:'The Real Phone Call',desc:'Not a check-in call. An actual call with no agenda, just talking the way you used to. Block an hour. Call each other.',why:'You both communicate best when it is not rushed. Give it the time it deserves.'},
       service:{emoji:'🛠️',title:'Show Up For Something',desc:'One of you does something for the other this month that they have been meaning to handle but have not gotten to. No announcement, just do it.',why:'Acts of service are how both of you say I see you. Use it on each other.'},
-      gifts:{emoji:'🎞️',title:'The Memory Project',desc:'Each of you pulls together something from your shared history — photos, a playlist, a letter, a memory. Share them over dinner or on a call.',why:'Shared history is what makes your bond real. Celebrate it intentionally.'},
-      change:{emoji:'📅',title:'The Monthly Commitment',desc:'Agree to one recurring thing — a monthly call, a dinner every few months, a check-in text every Sunday. Whatever fits. The point is that it is consistent.',why:'You both show up most when there is a commitment structure. Give it one.'},
+      gifts:{emoji:'🎞️',title:'The Memory Project',desc:'Each of you pulls together something from your shared history, photos, a playlist, a letter, a memory. Share them over dinner or on a call.',why:'Shared history is what makes your bond real. Celebrate it intentionally.'},
+      touch:{emoji:'🤜',title:'Keep The Sibling Code Alive',desc:'Next time you see each other, all the old moves are back on. The chirps, the nudges, stealing food off plates, a shoulder bump. That is the love language.',why:'You both score high on the sibling shorthand. Lean in. It is the love.'},
       none:{emoji:'☕',title:'Coffee and Catch-Up',desc:'Simple. One coffee, one hour, phones down. No agenda other than actually talking.',why:'Sometimes the simplest thing is the most overdue.'}
     },
     siblings_large:{
-      time:{emoji:'🏕️',title:'The Family Trip',desc:'Pick a date, a destination, and a budget. A cabin, a beach house, a road trip — something everyone can commit to. The planning is part of the bonding.',why:'Quality time together as a group is what the whole family values most. Make it happen.'},
+      time:{emoji:'🏕️',title:'The Family Trip',desc:'Pick a date, a destination, and a budget. A cabin, a beach house, a road trip, something everyone can commit to. The planning is part of the bonding.',why:'Quality time together as a group is what the whole family values most. Make it happen.'},
       words:{emoji:'🎤',title:'The Family Roast',desc:'Everyone writes three things they love about each sibling and one thing they would lovingly change. Share them out loud at your next gathering. Keep it real but keep it kind.',why:'This group communicates naturally. Give it a format and watch what happens.'},
-      service:{emoji:'🎂',title:'The Birthday Pact',desc:'Agree that for every sibling birthday, the whole group actually does something — not just a group chat message. A dinner, a call, a visit, something real.',why:'Acts of service are how this family shows love. Make it a group standard.'},
-      gifts:{emoji:'🛍️',title:'Secret Sibling Gift Swap',desc:'Assign names. Everyone gets one sibling a thoughtful gift by a set date — not expensive, just specific to them. No generic gifts allowed.',why:'Everyone pays attention to each other. This gives you a reason to act on it.'},
-      change:{emoji:'📱',title:'The Group Check-in Thread',desc:'Start a dedicated family group chat with one rule: every Sunday, everyone sends one sentence about their week. No pressure to respond, just staying connected.',why:'Everyone shows up most when there is a consistent commitment. This is the lowest-effort version of that.'},
+      service:{emoji:'🎂',title:'The Birthday Pact',desc:'Agree that for every sibling birthday, the whole group actually does something, not just a group chat message. A dinner, a call, a visit, something real.',why:'Acts of service are how this family shows love. Make it a group standard.'},
+      gifts:{emoji:'🛍️',title:'Secret Sibling Gift Swap',desc:'Assign names. Everyone gets one sibling a thoughtful gift by a set date, not expensive, just specific to them. No generic gifts allowed.',why:'Everyone pays attention to each other. This gives you a reason to act on it.'},
+      touch:{emoji:'🤜',title:'The Family Reunion Energy',desc:'At the next family gathering, the rule is no phones for the first hour. Real hugs, the chirping starts immediately, the inside jokes get fired up. Be siblings, not adults.',why:'This family runs on physical closeness and shared shorthand. Bring it back.'},
       none:{emoji:'🏠',title:'The Family Gathering',desc:'Pick a date. Everyone shows up. No special occasion required. The point is that you are all in the same room at the same time.',why:'Sometimes presence is the whole point.'}
     }
   };
@@ -1208,7 +1370,7 @@ function buildPricing(){
   var th=t();
   var ps=document.getElementById('pricing-section');
   var isCoupleMode=mode==='couple';
-  ps.innerHTML='<div class="pricing-header"><div class="pricing-title">Want to go deeper?</div><div class="pricing-sub">Your free results show the scores and insights. The reports go further.</div><div class="pricing-joke">If you really loved them more, you would already know what they answered. 👀</div></div><div class="pricing-tiers"><div class="tier-card"><div class="tier-header"><div class="tier-name">Free</div><div class="tier-price free">$0</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Scores and percentages</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Love style labels</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Personalized insights</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Activity suggestion</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">Detailed response overview</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">See what they answered</span></div></div><button class="tier-btn tier-btn-free" onclick="">You are already here</button></div>'+(isCoupleMode?'<div class="tier-card tier-recommended"><div class="tier-badge">Most popular</div><div class="tier-header"><div class="tier-name">The Overview</div><div class="tier-price">$5.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in free</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Summary of your response patterns</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>What your scores actually mean</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Your top love gap identified</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">See their exact answers</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'overview\')">Get the overview — $5.99</button><div class="tier-joke">Cheaper than flowers. More useful.</div></div><div class="tier-card"><div class="tier-header"><div class="tier-name">The Full Report</div><div class="tier-price">$10.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in the overview</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>See exactly what they answered on every question</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Side-by-side answer comparison</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Shareable PDF delivered instantly</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'full\')">Get the full report — $10.99</button><div class="tier-joke">If you really loved them more, you would already know what they picked.</div></div>':'<div class="tier-card tier-recommended"><div class="tier-badge">Most popular</div><div class="tier-header"><div class="tier-name">The Full Report</div><div class="tier-price">$5.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in free</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Full breakdown of everyone\'s response patterns</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Group love style comparison</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Shareable PDF for the whole group</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'group\')">Get the group report — $5.99</button><div class="tier-joke">Split it. That is like a dollar each.</div></div>')+'</div>';
+  ps.innerHTML='<div class="pricing-header"><div class="pricing-title">Want to go deeper?</div><div class="pricing-sub">Your free results show the scores and insights. The reports go further.</div></div><div class="pricing-tiers"><div class="tier-card"><div class="tier-header"><div class="tier-name">Free</div><div class="tier-price free">$0</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Scores and percentages</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Love style labels</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Personalized insights</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Activity suggestion</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">Detailed response overview</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">See what they answered</span></div></div><button class="tier-btn tier-btn-free" onclick="">You are already here</button></div>'+(isCoupleMode?'<div class="tier-card tier-recommended"><div class="tier-badge">Most popular</div><div class="tier-header"><div class="tier-name">The Overview</div><div class="tier-price">$5.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in free</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Summary of your response patterns</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>What your scores actually mean</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Your top love gap identified</span></div><div class="tier-feature"><span class="tier-feature-lock">✗</span><span style="color:#bbb">See their exact answers</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'overview\')">Get the overview — $5.99</button><div class="tier-joke">Cheaper than flowers. More useful.</div></div><div class="tier-card"><div class="tier-header"><div class="tier-name">The Full Report</div><div class="tier-price">$10.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in the overview</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>See exactly what they answered on every question</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Side-by-side answer comparison</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Shareable PDF delivered instantly</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'full\')">Get the full report — $10.99</button><div class="tier-joke">If you really loved them, you would get the full report. 👀</div></div>':'<div class="tier-card tier-recommended"><div class="tier-badge">Most popular</div><div class="tier-header"><div class="tier-name">The Overview</div><div class="tier-price">$5.99</div></div><div class="tier-features"><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Everything in free</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Full breakdown of everyone\'s response patterns</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Group love style comparison</span></div><div class="tier-feature"><span class="tier-feature-check">✓</span><span>Shareable PDF for the whole group</span></div></div><button class="tier-btn tier-btn-paid '+th.btnCls+'" onclick="handleReport(\'group\')">Get the overview — $5.99</button><div class="tier-joke">Split it. That is like a dollar each.</div></div>')+'</div>';
 }
 
 function handleReport(tier){
@@ -1216,7 +1378,7 @@ function handleReport(tier){
   btns.forEach(function(b){
     if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf(tier)>=0){
       b.textContent='Coming soon — building it now!';b.style.opacity='0.6';
-      setTimeout(function(){b.textContent=b.textContent.indexOf('5.99')>=0?'Get the overview — $5.99':tier==='group'?'Get the group report — $5.99':'Get the full report — $10.99';b.style.opacity='1';},3000);
+      setTimeout(function(){b.textContent=b.textContent.indexOf('5.99')>=0?'Get the overview — $5.99':tier==='group'?'Get the overview — $5.99':'Get the full report — $10.99';b.style.opacity='1';},3000);
     }
   });
 }
@@ -1225,7 +1387,6 @@ function buildShareCard(ranked,isGroup,isTie){
   var th=t();
   var ss=document.getElementById('share-section');ss.innerHTML='';
 
-  // Rainbow colors per rank
   var rainbow=[
     {bg:'#f0fdf4',border:'#86efac',pct:'#166534',label:'#166534'},
     {bg:'#fefce8',border:'#fde047',pct:'#854d0e',label:'#854d0e'},
@@ -1238,7 +1399,6 @@ function buildShareCard(ranked,isGroup,isTie){
   ];
   var tieC={bg:'#f8f8f8',border:'#e0e0e0',pct:'#555',label:'#888'};
 
-  // Build winner box HTML
   var winnerInner='';
   if(isTie){
     winnerInner='<div style="font-size:28px;margin-bottom:6px">'+th.emoji+th.emoji+'</div>'
@@ -1246,11 +1406,10 @@ function buildShareCard(ranked,isGroup,isTie){
       +'<div style="font-size:11px;color:rgba(255,255,255,0.9);margin-top:3px;font-weight:600">Equally matched. Equally insufferable.</div>';
   } else {
     winnerInner='<div style="font-size:28px;margin-bottom:4px">🏆</div>'
-      +'<div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.2)">'+ranked[0].name+(mode==='friends'?' is the better friend!':(mode==='siblings'?' is the better sibling!':' loves more!'))+'</div>'
+      +'<div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.2)">'+ranked[0].name+(mode==='friends'?' Is The Better Friend!':(mode==='siblings'?' Is The Better Sibling!':' Loves '+(ranked[1]?ranked[1].name:'')+' More!'))+'</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.9);margin-top:3px;font-weight:600">Officially. Mathematically. Undeniably.</div>';
   }
 
-  // Build score rows HTML
   var scoresHTML='';
   ranked.forEach(function(p,i){
     var lv=loveType(p.score);
@@ -1262,22 +1421,17 @@ function buildShareCard(ranked,isGroup,isTie){
       +'</div>';
   });
 
-  // Assemble full card HTML - gold border outer, white inner
   var cardHTML='<div style="border-radius:20px;padding:4px;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#f5d020,#c9940a,#7d5a00);box-shadow:0 4px 20px rgba(180,130,0,0.25);margin-bottom:16px">'
     +'<div style="background:#fff;border-radius:17px;padding:18px">'
-    // Header
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
     +'<div style="font-size:14px;font-weight:800;color:#111"><span style="color:#D4537E">ILYM</span>Quiz</div>'
     +'<div style="font-size:11px;font-weight:700;background:'+th.accent+';color:#fff;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:0.06em">'+th.shareName+'</div>'
     +'</div>'
-    // Winner box - gold shimmer
     +'<div style="position:relative;overflow:hidden;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#f5d020,#c9940a,#7d5a00);border-radius:12px;padding:18px 14px;text-align:center;margin-bottom:12px">'
     +'<div style="position:absolute;top:-30px;left:-30px;width:80px;height:160px;background:rgba(255,255,255,0.3);transform:rotate(35deg);animation:shine 3s infinite;pointer-events:none"></div>'
     +'<div style="position:relative;z-index:1">'+winnerInner+'</div>'
     +'</div>'
-    // Scores
     +scoresHTML
-    // Footer
     +'<div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid #f0f0f0;margin-top:4px">'
     +'<div style="font-size:11px;color:#aaa;font-weight:600">ILYMQuiz.com</div>'
     +'<div style="font-size:11px;color:#aaa;font-weight:700">#NoILoveYouMore</div>'
@@ -1286,7 +1440,6 @@ function buildShareCard(ranked,isGroup,isTie){
 
   ss.innerHTML=cardHTML;
 
-  // Build share text
   var raw='';
   if(isGroup){
     raw='We took the ILYM Quiz. Official ranking:\n\n';
@@ -1296,11 +1449,10 @@ function buildShareCard(ranked,isGroup,isTie){
   } else if(isTie){
     raw='We took the ILYM Quiz and it was basically a tie.\n\n'+ranked[0].name+': '+ranked[0].pct+'%  |  '+ranked[1].name+': '+ranked[1].pct+'%\n\nWe love each other equally and we are insufferable about it.\n\nSettle YOUR debate at ILYMQuiz.com\n\n#ILYMQuiz #NoILoveYouMore';
   } else {
-    raw='We took the ILYM Quiz and '+ranked[0].name+' loves more. Officially.\n\n'+ranked[0].name+': '+ranked[0].pct+'% - '+loveType(ranked[0].score).label+'\n'+ranked[1].name+': '+ranked[1].pct+'% - '+loveType(ranked[1].score).label+'\n\nSettle YOUR debate at ILYMQuiz.com\n\n#ILYMQuiz #NoILoveYouMore #RelationshipGoals';
+    raw='We took the ILYM Quiz and '+ranked[0].name+' Loves '+ranked[1].name+' More. Officially.\n\n'+ranked[0].name+': '+ranked[0].pct+'% - '+loveType(ranked[0].score).label+'\n'+ranked[1].name+': '+ranked[1].pct+'% - '+loveType(ranked[1].score).label+'\n\nSettle YOUR debate at ILYMQuiz.com\n\n#ILYMQuiz #NoILoveYouMore #RelationshipGoals';
   }
   ss.dataset.raw=raw;
 
-  // Save & Share button
   var saveBtn=document.createElement('button');
   saveBtn.className='share-save-btn';
   saveBtn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Save & Share';
@@ -1331,7 +1483,6 @@ function buildShareCard(ranked,isGroup,isTie){
   };
   ss.appendChild(saveBtn);
 
-  // Play again button
   var againWrap=document.createElement('div');againWrap.style.marginTop='4px';
   var againBtn=document.createElement('button');
   againBtn.style.cssText='width:100%;padding:14px;background:#f5f5f5;color:#111;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation';
@@ -1339,57 +1490,32 @@ function buildShareCard(ranked,isGroup,isTie){
   againWrap.appendChild(againBtn);ss.appendChild(againWrap);
 }
 
-
-
-function copyAndConfirm(btn,text,label){
-  navigator.clipboard.writeText(text).then(function(){
-    var orig=btn.innerHTML;
-    btn.textContent='Copied! Go paste it 🎉';
-    setTimeout(function(){btn.innerHTML=orig;},2500);
-  });
-}
-function copyShareText(btn){
-  var raw=document.getElementById('share-section').dataset.raw||'';
-  var platform=btn.getAttribute('data-platform');
-  navigator.clipboard.writeText(raw).then(function(){
-    var orig=btn.innerHTML;
-    btn.textContent='Copied!';
-    setTimeout(function(){btn.innerHTML=orig;},2500);
-  });
-}
 function backToModes(){showScreen(null);document.getElementById('quiz').scrollIntoView({behavior:'smooth'});}
 function resetQuiz(){currentSessionId=null;if(pollingInterval){clearInterval(pollingInterval);pollingInterval=null;}showScreen(null);document.getElementById('quiz').scrollIntoView({behavior:'smooth'});}
 function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});if(id)document.getElementById(id).classList.add('active');}
 
-// Handle incoming quiz links: ?session=X&player=Y
 (function(){
   var params=new URLSearchParams(window.location.search);
   var sessionId=params.get('session');
   var playerIdx=params.get('player');
   if(!sessionId||playerIdx===null)return;
 
-  // Load session from API and start this player's quiz
   fetch('/api/check-completion?sessionId='+sessionId)
   .then(function(r){return r.json();})
   .then(function(data){
     if(!data.success)return;
     if(data.status==='complete'){
-      // Session already done - show results
       showResultsFromAPI(data);
       return;
     }
 
-    // Set up quiz state from session data
     mode=data.mode;
     currentSessionId=sessionId;
     currentPlayer=parseInt(playerIdx);
 
-    // We need the full session details - fetch from supabase via check-completion
-    // playerNames come from the leaderboard + pending
     var allNames=[];
     data.leaderboard.forEach(function(r){allNames[r.playerIndex]=r.name;});
     data.pending.forEach(function(name,i){
-      // find first empty slot
       for(var j=0;j<20;j++){if(!allNames[j]){allNames[j]=name;break;}}
     });
     playerNames=allNames.filter(Boolean);
@@ -1400,12 +1526,11 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
     langTotals=playerNames.map(function(){return {};});
     playerSurveys=playerNames.map(function(){return {};});
 
-    var qCount=playerCount<=2?11:playerCount<=4?9:7;
+    var qCount=playerCount<=2?11:9;
     QUESTIONS=ALL_QUESTIONS[mode].slice(0,qCount).map(function(q){
-      return{scenario:q.scenario,question:q.question,answers:shuffle(q.answers)};
+      return{question:q.question,answers:shuffle(q.answers)};
     });
 
-    // Show this player's survey then quiz
     applyThemeQuiz();
     showPlayerSurvey();
     document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth'});
