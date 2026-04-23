@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
-    "twilio": "^4.19.0"
+    "twilio": "^4.19.0",
+    "stripe": "^17.0.0",
+    "resend": "^4.0.0",
+    "@anthropic-ai/sdk": "^0.27.0"
   }
 }
