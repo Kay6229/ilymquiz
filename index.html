@@ -1202,7 +1202,7 @@ function showResults(){
   if(isGroup){
     var lb=document.createElement('div');lb.className='leaderboard';
     var lt=document.createElement('div');lt.className='leaderboard-title';lt.textContent='Final Rankings';lb.appendChild(lt);
-    var medals=['🥇','🥈','🥉'];
+    var medals=['🥇','🥈','🥉','🎗️'];
     ranked.forEach(function(p,i){
       var row=document.createElement('div');
       var cls=i===0?'podium-1':i===1?'podium-2':i===2?'podium-3':'podium-other';
@@ -1551,7 +1551,7 @@ function buildShareCard(ranked,isGroup,isTie){
   var raw='';
   if(isGroup){
     raw='We took the ILYM Quiz. Official ranking:\n\n';
-    var m2=['🥇','🥈','🥉'];
+    var m2=['🥇','🥈','🥉','🎗️'];
     ranked.forEach(function(p,i){raw+=(m2[i]||'#'+(i+1))+' '+p.name+': '+p.pct+'%\n';});
     raw+='\nSettle YOUR debate 👉 ILYMQuiz.com\n\n#ILYMQuiz #NoILoveYouMore';
   } else if(isTie){
