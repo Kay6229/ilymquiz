@@ -1374,12 +1374,56 @@ function buildPricing(){
 }
 
 function handleReport(tier){
+  // Find the clicked button to show loading state
+  var clickedBtn=null;
   var btns=document.querySelectorAll('.tier-btn-paid');
   btns.forEach(function(b){
     if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf(tier)>=0){
-      b.textContent='Coming soon — building it now!';b.style.opacity='0.6';
-      setTimeout(function(){b.textContent=b.textContent.indexOf('5.99')>=0?'Get the overview — $5.99':tier==='group'?'Get the overview — $5.99':'Get the full report — $10.99';b.style.opacity='1';},3000);
+      clickedBtn=b;
     }
+  });
+  if(!clickedBtn)return;
+
+  var originalText=clickedBtn.textContent;
+  clickedBtn.textContent='Redirecting to checkout...';
+  clickedBtn.style.opacity='0.6';
+  clickedBtn.disabled=true;
+
+  // 'group' tier is just the overview for non-couple modes
+  var realTier=(tier==='group')?'overview':tier;
+
+  // Gather quiz data to send to the backend
+  var payload={
+    tier:realTier,
+    mode:mode,
+    playerNames:playerNames,
+    playerScores:scores,
+    playerLangTotals:langTotals,
+    playerSurveys:playerSurveys,
+    playerAnswers:playerAnswers||null
+  };
+
+  fetch('/api/create-checkout',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.success&&data.checkoutUrl){
+      window.location.href=data.checkoutUrl;
+    }else{
+      throw new Error(data.error||'Checkout failed');
+    }
+  })
+  .catch(function(err){
+    console.error('Checkout error:',err);
+    clickedBtn.textContent='Something went wrong. Try again.';
+    clickedBtn.style.opacity='1';
+    clickedBtn.disabled=false;
+    setTimeout(function(){
+      clickedBtn.textContent=originalText;
+    },3000);
   });
 }
 
