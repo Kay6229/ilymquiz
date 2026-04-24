@@ -15,7 +15,7 @@ const supabase = createClient(
 );
 
 export const config = {
-  maxDuration: 60
+  maxDuration: 300
 };
 
 // Label buckets — identical to index.html free-results logic
@@ -194,11 +194,11 @@ ${breakdownStr}`;
 
   const fullReportExtras = tier === 'full' ? `
 
-4. A Section 04 "Side by Side" showing every question and what each player picked, color-coded
-5. A Section 05 "How Scoring Works" explaining the +1 to +4 scale
+4. A Section 04 "Side by Side" with heading "<h2 class=\\"h2\\">Side by side, <span class=\\"accent\\">answer by answer.</span></h2>" — show each of the 11 questions as a compact row: question number + short question stem + both players' picks on one line each. Keep it tight; no essays.
+5. A Section 05 "How Scoring Works" with heading "<h2 class=\\"h2\\">How we <span class=\\"accent\\">did the math.</span></h2>" — ONE short paragraph (~3 sentences) explaining the +4/+3/+2/+1 scale. Do NOT be verbose.
 ` : '';
 
-  return `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas.
+  return `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
 MODE: ${mode}
 TIER: ${tier}
