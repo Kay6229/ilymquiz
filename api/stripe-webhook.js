@@ -59,6 +59,73 @@ function getLangDisplay(mode) {
   };
 }
 
+// Escape user-supplied strings before splicing into HTML (questions/answers from DB)
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Build Side by Side table + Note from Team as deterministic HTML, no LLM involved.
+// This prevents hallucinated questions — we use the actual playerAnswers from the DB.
+function buildFullReportExtras(playerNames, playerAnswers) {
+  const [nameA, nameB] = playerNames;
+
+  let sideBySide;
+  if (!playerAnswers || !playerAnswers[0] || !playerAnswers[1]) {
+    sideBySide = '';
+  } else {
+    const a = playerAnswers[0];
+    const b = playerAnswers[1];
+    const qIndexes = Object.keys(a).map(n => parseInt(n, 10)).sort((x, y) => x - y);
+    const rows = qIndexes.map(qi => {
+      const qa = a[qi];
+      const qb = b[qi];
+      if (!qa || !qb) return '';
+      const isMatch = qa.answerIdx === qb.answerIdx || (qa.text && qb.text && qa.text === qb.text);
+      return `
+        <div class="sbs-row${isMatch ? ' sbs-match' : ''}">
+          <div class="sbs-row-head">
+            <div class="sbs-qnum">Q${qi + 1}</div>
+            <div class="sbs-qtext">${escapeHtml(qa.question || '')}</div>
+            ${isMatch ? '<div class="sbs-match-badge">Match</div>' : ''}
+          </div>
+          <div class="sbs-row-answers">
+            <div class="sbs-ans"><span class="sbs-ans-label sbs-ans-a">${escapeHtml(nameA)}</span><span class="sbs-ans-text">${escapeHtml(qa.text || '')}</span></div>
+            <div class="sbs-ans"><span class="sbs-ans-label sbs-ans-b">${escapeHtml(nameB)}</span><span class="sbs-ans-text">${escapeHtml(qb.text || '')}</span></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    sideBySide = `
+  <div class="section">
+    <div class="eyebrow">Section 04 · Receipts</div>
+    <h2 class="h2">Side by side, <span class="accent">answer by answer.</span></h2>
+    <p class="body-text">Every question. Both picks. Matches get a little green moment.</p>
+    <div class="sbs-wrap">
+      ${rows}
+    </div>
+  </div>`;
+  }
+
+  const noteSection = `
+  <div class="section note-section">
+    <div class="note-card">
+      <div class="note-eyebrow">A note from our team</div>
+      <p class="note-body">We didn't cover every aspect of chemistry 😏. And there are a thousand ways each of these moments could play out that we couldn't possibly list.</p>
+      <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
+      <p class="note-body">Take what's useful, laugh at the rest, and unless it's to love your person better, don't make any drastic changes.</p>
+      <p class="note-sig">Xoxo, ILYMQuiz 💕</p>
+    </div>
+  </div>`;
+
+  return sideBySide + noteSection;
+}
+
 const REPORT_CSS = `
 <style>
   :root {
@@ -159,6 +226,31 @@ const REPORT_CSS = `
   .footer-logo span { color: var(--pink); }
   .footer-text { font-size: 11px; color: var(--muted); font-weight: 600; }
 
+  /* Side by Side table (Full Report only) */
+  .sbs-wrap { margin-top: 24px; display: grid; gap: 10px; }
+  .sbs-row { background: #fff; border: 1px solid #f1ebe7; border-radius: 12px; padding: 16px 18px; }
+  .sbs-row.sbs-match { background: #f0f9f3; border-color: #c8e6d0; }
+  .sbs-row-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .sbs-qnum { font-size: 18px; font-weight: 900; color: var(--pink); line-height: 1; flex-shrink: 0; }
+  .sbs-row.sbs-match .sbs-qnum { color: var(--green); }
+  .sbs-qtext { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; flex: 1; }
+  .sbs-match-badge { font-size: 9px; font-weight: 900; background: var(--green); color: #fff; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
+  .sbs-row-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 10px; border-top: 1px solid #f5f0ec; }
+  .sbs-row.sbs-match .sbs-row-answers { border-top-color: #c8e6d0; }
+  .sbs-ans { display: flex; flex-direction: column; gap: 4px; }
+  .sbs-ans-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sbs-ans-label.sbs-ans-a { color: var(--pink-deep); }
+  .sbs-ans-label.sbs-ans-b { color: var(--blue-deep); }
+  .sbs-ans-text { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+  /* Note from team (closing section) */
+  .note-section { background: linear-gradient(180deg, #fff, var(--pink-soft)); }
+  .note-card { text-align: center; max-width: 520px; margin: 0 auto; }
+  .note-eyebrow { font-size: 10px; font-weight: 800; color: var(--pink); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 20px; }
+  .note-body { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 14px; }
+  .note-body strong { color: var(--ink); font-weight: 800; }
+  .note-sig { font-size: 15px; color: var(--pink-deep); font-weight: 700; margin-top: 20px; }
+
   /* Mobile adjustments — desktop unchanged above */
   @media (max-width: 640px) {
     body { padding: 16px 8px; }
@@ -215,6 +307,17 @@ const REPORT_CSS = `
     .rec-title { font-size: 13px; line-height: 1.35; }
     .rec-desc { font-size: 13.5px; }
 
+    /* Side by Side — stack answers vertically on mobile */
+    .sbs-row { padding: 14px 16px; }
+    .sbs-qnum { font-size: 16px; }
+    .sbs-qtext { font-size: 13px; }
+    .sbs-row-answers { grid-template-columns: 1fr; gap: 8px; }
+    .sbs-ans-text { font-size: 13px; }
+
+    /* Note section */
+    .note-body { font-size: 14.5px; }
+    .note-sig { font-size: 14px; }
+
     /* Footer */
     .footer { padding: 24px 20px; }
     .footer-text { font-size: 10.5px; }
@@ -223,7 +326,7 @@ const REPORT_CSS = `
 `;
 
 function buildPrompt(report) {
-  const { mode, tier, player_names, player_scores, player_lang_totals } = report;
+  const { mode, tier, player_names, player_scores, player_lang_totals, player_answers } = report;
   const maxPossible = 44;
   const pcts = player_scores.map(s => Math.round((s / maxPossible) * 100));
   const langDisplay = getLangDisplay(mode);
@@ -258,13 +361,8 @@ ${breakdownStr}`;
   const winnerIdx = player_scores.indexOf(Math.max(...player_scores));
   const winnerName = player_names[winnerIdx];
 
-  const fullReportExtras = tier === 'full' ? `
-
-4. A Section 04 "Side by Side" with heading "<h2 class=\\"h2\\">Side by side, <span class=\\"accent\\">answer by answer.</span></h2>" — show each of the 11 questions as a compact row: question number + short question stem + both players' picks on one line each. Keep it tight; no essays.
-5. A Section 05 "How Scoring Works" with heading "<h2 class=\\"h2\\">How we <span class=\\"accent\\">did the math.</span></h2>" — ONE short paragraph (~3 sentences) explaining the +4/+3/+2/+1 scale. Do NOT be verbose.
-` : '';
-
-  return `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
+  const fullReportExtras = tier === 'full' ? buildFullReportExtras(player_names, player_answers) : '';
+  const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
 MODE: ${mode}
 TIER: ${tier}
@@ -353,7 +451,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
       [THREE rec divs, numbered 1/2/3, each with rec-title (ALL CAPS, references a player by name) and rec-desc (~2 sentences, concrete and actionable)]
     </div>
   </div>
-${fullReportExtras}
+<!-- EXTRAS_PLACEHOLDER -->
   <div class="footer">
     <div class="footer-logo"><span>ILYM</span>Quiz</div>
     <div class="footer-text">ilymquiz.com · Generated for ${player_names.join(' & ')} · ${dateStr}</div>
@@ -368,7 +466,9 @@ REMINDERS:
 - Use the EXACT percentages provided.
 - Do not output anything outside REPORT START/END comments.
 - Do not include <style>, <html>, or <body> tags.
+- Keep the literal "<!-- EXTRAS_PLACEHOLDER -->" comment exactly where it is — we will splice real content there after.
 `;
+  return { prompt, fullReportExtras };
 }
 
 async function generateReportForId(paidReportId) {
@@ -383,7 +483,7 @@ async function generateReportForId(paidReportId) {
     return { ok: false, reason: 'not_found' };
   }
 
-  const prompt = buildPrompt(report);
+  const { prompt, fullReportExtras } = buildPrompt(report);
 
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
@@ -407,7 +507,14 @@ async function generateReportForId(paidReportId) {
     return { ok: false, reason: 'no_markers' };
   }
 
-  const reportBody = rawHtml.substring(startIdx + startMarker.length, endIdx).trim();
+  let reportBody = rawHtml.substring(startIdx + startMarker.length, endIdx).trim();
+  // Splice deterministic extras (Side by Side + Note from Team) in place of the placeholder.
+  // If Claude dropped the placeholder, fall back to appending before the footer.
+  if (reportBody.includes('<!-- EXTRAS_PLACEHOLDER -->')) {
+    reportBody = reportBody.replace('<!-- EXTRAS_PLACEHOLDER -->', fullReportExtras);
+  } else if (fullReportExtras) {
+    reportBody = reportBody.replace(/<div class="footer">/, fullReportExtras + '\n<div class="footer">');
+  }
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
