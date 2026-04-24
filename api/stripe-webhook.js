@@ -94,6 +94,82 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+// ---------- COMPATIBILITY CALCULATION ----------
+// Deterministic compatibility score so Claude doesn't have to do math (and gets it wrong).
+// Weighting: 55% Match Rate + 30% Effort + 15% Language Overlap
+// Rationale (from Kay): Effort is the lever someone can pull. Language is closer to innate
+// wiring. A high-effort partner with a different language can still close the gap; a
+// low-effort partner with matching languages still won't show up.
+//
+// Returns: { compatibilityScore, matchRate, totalQuestions, matchedQuestions, langOverlap, avgEffort }
+// Multi-player (3+) falls back to: 70% effort + 30% language overlap (no match rate).
+function calculateCompatibility(playerAnswers, playerLangTotals, playerScores, maxPossible) {
+  // 1. MATCH RATE — how many questions did both players answer identically?
+  // Only meaningful when there are exactly 2 players.
+  let matchRate = 0;
+  let matchedQuestions = 0;
+  let totalQuestions = 0;
+  if (playerAnswers && playerAnswers.length === 2 && playerAnswers[0] && playerAnswers[1]) {
+    const a = playerAnswers[0];
+    const b = playerAnswers[1];
+    const qIndexes = Object.keys(a).map(n => parseInt(n, 10)).sort((x, y) => x - y);
+    totalQuestions = qIndexes.length;
+    for (const qi of qIndexes) {
+      const qa = a[qi];
+      const qb = b[qi];
+      if (!qa || !qb) continue;
+      const isMatch = qa.answerIdx === qb.answerIdx || (qa.text && qb.text && qa.text === qb.text);
+      if (isMatch) matchedQuestions++;
+    }
+    matchRate = totalQuestions > 0 ? Math.round((matchedQuestions / totalQuestions) * 100) : 0;
+  }
+
+  // 2. LANGUAGE OVERLAP — how similar are their love-language distributions?
+  // 100 minus the average per-category absolute difference (excluding 'none').
+  // Two players with identical breakdowns score 100. Totally different distributions score lower.
+  let langOverlap = 0;
+  if (playerLangTotals && playerLangTotals.length === 2 && playerLangTotals[0] && playerLangTotals[1]) {
+    const a = playerLangTotals[0];
+    const b = playerLangTotals[1];
+    const keys = ['words', 'gifts', 'service', 'time', 'touch'];
+    const totalA = keys.reduce((s, k) => s + (a[k] || 0), 0) || 1;
+    const totalB = keys.reduce((s, k) => s + (b[k] || 0), 0) || 1;
+    let sumDiff = 0;
+    for (const k of keys) {
+      const pctA = ((a[k] || 0) / totalA) * 100;
+      const pctB = ((b[k] || 0) / totalB) * 100;
+      sumDiff += Math.abs(pctA - pctB);
+    }
+    const avgDiff = sumDiff / keys.length;
+    langOverlap = Math.max(0, Math.min(100, Math.round(100 - avgDiff)));
+  }
+
+  // 3. AVERAGE EFFORT — mean of individual percentage scores
+  let avgEffort = 0;
+  if (playerScores && playerScores.length > 0) {
+    const pcts = playerScores.map(s => (s / maxPossible) * 100);
+    avgEffort = Math.round(pcts.reduce((sum, p) => sum + p, 0) / pcts.length);
+  }
+
+  // FINAL: weighted compatibility score
+  let compatibilityScore;
+  if (totalQuestions > 0) {
+    compatibilityScore = Math.round((matchRate * 0.55) + (avgEffort * 0.30) + (langOverlap * 0.15));
+  } else {
+    // Multi-player fallback (no match-rate available)
+    compatibilityScore = Math.round((avgEffort * 0.70) + (langOverlap * 0.30));
+  }
+
+  return {
+    compatibilityScore,
+    matchRate,
+    totalQuestions,
+    matchedQuestions,
+    langOverlap,
+    avgEffort
+  };
+}
+
 // Build Side by Side table + Note from Team as deterministic HTML, no LLM involved.
 // - Overview tier: just the note section
 // - Full tier: Side by Side (from real playerAnswers + playerSurveys) + note section
@@ -108,7 +184,6 @@ function buildReportExtras(tier, mode, playerNames, playerAnswers, playerSurveys
     const b = playerAnswers[1];
 
     // Pre-question rows — 4 cards at the top, one per survey field, per-player.
-    // Rendered BEFORE the main question rows so they appear first in the section.
     let surveyRows = '';
     if (playerSurveys && playerSurveys[0] && playerSurveys[1]) {
       const sa = playerSurveys[0];
@@ -310,7 +385,7 @@ const REPORT_CSS = `
   .gap-tag { position: absolute; top: -12px; left: 24px; background: var(--pink); color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 12px; border-radius: 999px; }
   .gap-title { font-size: 21px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.01em; }
   .gap-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
-  .gap-desc strong { color: var(--ink); }
+  .gap-desc strong { color: var(--ink); font-weight: 800; }
   .recs { margin-top: 24px; display: grid; gap: 16px; }
   .rec { display: flex; gap: 18px; padding: 24px; background: var(--gold-soft); border-radius: 16px; border: 1px solid #f0e0a0; }
   .rec-num { flex-shrink: 0; width: 44px; height: 44px; background: linear-gradient(135deg, var(--gold), #7d5a00); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; }
@@ -431,6 +506,9 @@ function buildPrompt(report) {
   const pcts = player_scores.map(s => Math.round((s / maxPossible) * 100));
   const langDisplay = getLangDisplay(mode);
 
+  // Calculate compatibility deterministically (no LLM math involved)
+  const compat = calculateCompatibility(player_answers, player_lang_totals, player_scores, maxPossible);
+
   const perPlayerData = player_names.map((name, i) => {
     const label = getLoveTypeLabel(mode, pcts[i]);
     const langs = player_lang_totals[i] || {};
@@ -493,6 +571,29 @@ ${breakdownStr}${surveyStr}`;
     ? `\n- MULTI-PLAYER MODE (${player_names.length} players): The Love Gap section MUST reference every player by name: ${player_names.join(', ')}. Do not leave anyone out.`
     : '';
 
+  // Compatibility breakdown block to give Claude.
+  const compatBreakdown = compat.totalQuestions > 0
+    ? `
+COMPATIBILITY SCORE (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
+- Final Compatibility Score: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
+- Match Rate: ${compat.matchRate}% (${compat.matchedQuestions} of ${compat.totalQuestions} questions answered identically)
+- Language Overlap: ${compat.langOverlap}%
+- Average Effort: ${compat.avgEffort}%
+- Formula: 55% Match Rate + 30% Avg Effort + 15% Language Overlap`
+    : `
+COMPATIBILITY SCORE (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
+- Final Compatibility Score: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
+- Language Overlap: ${compat.langOverlap}%
+- Average Effort: ${compat.avgEffort}%
+- Formula (multi-player): 70% Avg Effort + 30% Language Overlap`;
+
+  // Hint to Claude about whether to do a "X out of Y matches" callout
+  const matchCalloutHint = compat.totalQuestions > 0 && compat.matchedQuestions >= 7
+    ? `\n- The match rate is HIGH (${compat.matchedQuestions}/${compat.totalQuestions}). Consider calling this out in the Verdict headline or section copy — it's a great shareable stat.`
+    : compat.totalQuestions > 0 && compat.matchedQuestions <= 3
+    ? `\n- The match rate is LOW (${compat.matchedQuestions}/${compat.totalQuestions}). Frame this as "you see things differently" rather than as failure — different perspectives can be a feature, not a bug.`
+    : '';
+
   const reportExtras = buildReportExtras(tier, mode, player_names, player_answers, player_surveys);
   const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
@@ -503,6 +604,7 @@ DATE: ${dateStr}
 PLAYER DATA (use these EXACT labels and percentages — do NOT invent new ones):
 
 ${dataBlock}
+${compatBreakdown}
 
 WINNER: ${winnerName}
 
@@ -511,6 +613,7 @@ CRITICAL RULES:
 - Show all FIVE language categories in each player's pattern card, in the EXACT order provided, including those at 0%. Do not hide any. Do not reorder.
 - Each score-card must include an effort badge using the CSS class provided (effort-high, effort-medium, or effort-low).
 - Use the EXACT percentages provided above.${multiPlayerRule}
+- COMPATIBILITY: The verdict-score-num MUST be the exact "Final Compatibility Score" provided above (${compat.compatibilityScore}%). Do not calculate your own. Do not average the player scores. Use the provided number, full stop.${matchCalloutHint}
 - RELATIONSHIP CONTEXT: When relationship length is short ("Less than a year" or "1-5 years") and scores are mid-range (Warm or Consistent labels), contextualize rather than criticize. A "Warm Lover" at 6 months is not a deficiency — it's appropriate for the discovery phase. Weave this nuance into the Verdict, Love Gap, and Recs sections naturally. For longer relationships with mid-range scores, you can be more direct about growth opportunities.
 - If players' Pre-Quiz answers DIVERGE (e.g., one says "Less than a year" and the other says "1-5 years", or different dynamics/values), feel free to playfully call this out in the Verdict or Love Gap section — it's a great conversation starter.
 
@@ -553,7 +656,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
     <div class="verdict-eyebrow">The Verdict</div>
     <p class="verdict-headline">"[Witty BuzzFeed-style headline specific to this pair, ~15 words]"</p>
     <div class="verdict-score">
-      <div class="verdict-score-num">[avg compatibility %]</div>
+      <div class="verdict-score-num">${compat.compatibilityScore}%</div>
       <div class="verdict-score-label">Compatibility</div>
     </div>
   </div>
@@ -602,6 +705,7 @@ REMINDERS:
 - Each score card MUST include the effort-badge div with the exact CSS class given.
 - Pattern cards MUST show all 5 language categories in the EXACT order given, even at 0%.
 - Use the EXACT percentages provided.
+- The verdict-score-num MUST be ${compat.compatibilityScore}% (the calculated compatibility, NOT an average of player scores).
 - Do not output anything outside REPORT START/END comments.
 - Do not include <style>, <html>, or <body> tags.
 - Keep the literal "<!-- EXTRAS_PLACEHOLDER -->" comment exactly where it is — we will splice real content there after.
