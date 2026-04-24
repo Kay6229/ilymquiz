@@ -155,6 +155,12 @@ const REPORT_CSS = `
     --blue: #378ADD;
     --blue-soft: #e6f1fb;
     --blue-deep: #185FA5;
+    --peach: #e67e50;
+    --peach-soft: #fdece2;
+    --peach-deep: #a84718;
+    --purple: #9d7fd4;
+    --purple-soft: #f1ecfa;
+    --purple-deep: #5f3ea3;
     --gold: #c9940a;
     --gold-soft: #fdf3d8;
     --ink: #111;
@@ -196,12 +202,18 @@ const REPORT_CSS = `
   .score-card { border-radius: 18px; padding: 26px 22px; text-align: center; border: 2px solid; }
   .score-card.player-a { background: var(--pink-soft); border-color: var(--pink); }
   .score-card.player-b { background: var(--blue-soft); border-color: var(--blue); }
+  .score-card.player-c { background: var(--peach-soft); border-color: var(--peach); }
+  .score-card.player-d { background: var(--purple-soft); border-color: var(--purple); }
   .sc-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
   .player-a .sc-name { color: var(--pink-deep); }
   .player-b .sc-name { color: var(--blue-deep); }
+  .player-c .sc-name { color: var(--peach-deep); }
+  .player-d .sc-name { color: var(--purple-deep); }
   .sc-pct { font-size: 52px; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
   .player-a .sc-pct { color: var(--pink-deep); }
   .player-b .sc-pct { color: var(--blue-deep); }
+  .player-c .sc-pct { color: var(--peach-deep); }
+  .player-d .sc-pct { color: var(--purple-deep); }
   .sc-style { font-size: 15px; color: var(--ink); font-weight: 700; }
   .effort-badge { display: inline-block; margin-top: 12px; padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
   .effort-badge.effort-high { background: #d8efe0; color: #1a6b34; }
@@ -217,9 +229,13 @@ const REPORT_CSS = `
   .pattern-card { border-radius: 18px; padding: 24px; border: 2px solid transparent; }
   .pattern-card.player-a { background: var(--pink-soft); border-color: rgba(212,83,126,0.25); }
   .pattern-card.player-b { background: var(--blue-soft); border-color: rgba(55,138,221,0.25); }
+  .pattern-card.player-c { background: var(--peach-soft); border-color: rgba(230,126,80,0.25); }
+  .pattern-card.player-d { background: var(--purple-soft); border-color: rgba(157,127,212,0.25); }
   .pattern-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
   .player-a .pattern-name { color: var(--pink-deep); }
   .player-b .pattern-name { color: var(--blue-deep); }
+  .player-c .pattern-name { color: var(--peach-deep); }
+  .player-d .pattern-name { color: var(--purple-deep); }
   .pattern-tag { font-size: 13px; color: var(--ink-soft); font-style: italic; margin-bottom: 14px; font-weight: 500; }
   .bar-row { margin-bottom: 12px; }
   .bar-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -227,10 +243,14 @@ const REPORT_CSS = `
   .bar-pct { font-size: 12.5px; font-weight: 800; }
   .player-a .bar-pct { color: var(--pink-deep); }
   .player-b .bar-pct { color: var(--blue-deep); }
+  .player-c .bar-pct { color: var(--peach-deep); }
+  .player-d .bar-pct { color: var(--purple-deep); }
   .bar-track { height: 7px; background: rgba(255,255,255,0.7); border-radius: 999px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 999px; min-width: 2px; }
   .player-a .bar-fill { background: linear-gradient(90deg, var(--pink), var(--pink-deep)); }
   .player-b .bar-fill { background: linear-gradient(90deg, var(--blue), var(--blue-deep)); }
+  .player-c .bar-fill { background: linear-gradient(90deg, var(--peach), var(--peach-deep)); }
+  .player-d .bar-fill { background: linear-gradient(90deg, var(--purple), var(--purple-deep)); }
   .bar-fill.zero { background: rgba(0,0,0,0.1) !important; }
   .gap-callout { background: #fff; border: 2px solid var(--pink); border-radius: 18px; padding: 28px; margin-top: 24px; position: relative; }
   .gap-tag { position: absolute; top: -12px; left: 24px; background: var(--pink); color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 12px; border-radius: 999px; }
@@ -393,6 +413,22 @@ ${breakdownStr}`;
   const tierPillClass = tier === 'full' ? 'gold' : '';
   const winnerIdx = player_scores.indexOf(Math.max(...player_scores));
   const winnerName = player_names[winnerIdx];
+  const isMulti = player_names.length > 2;
+
+  // Mode + player-count specific headline for the Love Gap section
+  let gapHeadline;
+  if (isMulti && mode === 'friends') {
+    gapHeadline = `The <span class="accent">Friendship Gap.</span>`;
+  } else if (isMulti && mode === 'siblings') {
+    gapHeadline = `The <span class="accent">Sibling Gap.</span>`;
+  } else {
+    gapHeadline = `The one thing you're <span class="accent">getting wrong</span> about each other.`;
+  }
+
+  // Multi-player sentence for the all-players rule in the prompt
+  const multiPlayerRule = isMulti
+    ? `\n- MULTI-PLAYER MODE (${player_names.length} players): The Love Gap section MUST reference every player by name: ${player_names.join(', ')}. Do not leave anyone out.`
+    : '';
 
   const reportExtras = buildReportExtras(tier, mode, player_names, player_answers);
   const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
@@ -411,7 +447,7 @@ CRITICAL RULES:
 - The "Official Label" above (e.g. "Warm Lover", "All-in Lover") is what you MUST put in the sc-style field for each player. Do NOT invent custom labels.
 - Show all FIVE language categories in each player's pattern card, in the EXACT order provided, including those at 0%. Do not hide any. Do not reorder.
 - Each score-card must include an effort badge using the CSS class provided (effort-high, effort-medium, or effort-low).
-- Use the EXACT percentages provided above.
+- Use the EXACT percentages provided above.${multiPlayerRule}
 
 Write a complete HTML document wrapped in the structure below. Do NOT include <html>, <head>, or <body> tags. Start with "<!-- REPORT START -->" and end with "<!-- REPORT END -->".
 
@@ -444,7 +480,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
     <h2 class="h2">Here's how each of you <span class="accent">actually scored.</span></h2>
     <p class="body-text">[Short 1-2 sentence setup]</p>
     <div class="score-grid">
-      [For each player, produce a score-card with class "player-a" or "player-b". Include in this order: sc-name (player's name, uppercase), sc-pct (their percentage), sc-style (their EXACT Official Label), and an effort-badge div with the EXACT CSS class provided (e.g. <div class="effort-badge effort-high">High Effort</div>).]
+      [For each player IN THE EXACT ORDER PROVIDED ABOVE, produce a score-card with the slot class: first player = "player-a", second = "player-b", third = "player-c", fourth = "player-d". Include in this order inside the card: sc-name (player's name, uppercase), sc-pct (their percentage), sc-style (their EXACT Official Label), and an effort-badge div with the EXACT CSS class provided (e.g. <div class="effort-badge effort-high">High Effort</div>).]
     </div>
   </div>
 
@@ -468,7 +504,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
 
   <div class="section">
     <div class="eyebrow">Section 02 · The Love Gap</div>
-    <h2 class="h2">The one thing you're <span class="accent">getting wrong</span> about each other.</h2>
+    <h2 class="h2">${gapHeadline}</h2>
     <p class="body-text">[Setup sentence]</p>
     <div class="gap-callout">
       <div class="gap-tag">Your Top Love Gap</div>
