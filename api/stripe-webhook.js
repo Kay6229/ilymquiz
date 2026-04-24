@@ -83,6 +83,12 @@ function getSurveyLabels(mode) {
   };
 }
 
+// Mode-aware label for the Verdict score box ("Compatibility" vs "Sync Score")
+function getCompatLabel(mode) {
+  if (mode === 'friends' || mode === 'siblings') return 'Sync Score';
+  return 'Compatibility';
+}
+
 // Escape user-supplied strings before splicing into HTML (questions/answers from DB)
 function escapeHtml(s) {
   if (s == null) return '';
@@ -94,18 +100,21 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
-// ---------- COMPATIBILITY CALCULATION ----------
-// Deterministic compatibility score so Claude doesn't have to do math (and gets it wrong).
-// Weighting: 55% Match Rate + 30% Effort + 15% Language Overlap
-// Rationale (from Kay): Effort is the lever someone can pull. Language is closer to innate
-// wiring. A high-effort partner with a different language can still close the gap; a
-// low-effort partner with matching languages still won't show up.
+// ---------- COMPATIBILITY / SYNC SCORE CALCULATION ----------
+// Deterministic so Claude doesn't have to do math (and gets it wrong).
 //
-// Returns: { compatibilityScore, matchRate, totalQuestions, matchedQuestions, langOverlap, avgEffort }
+// COUPLES:   55% Match Rate + 30% Effort + 15% Language Overlap
+// FRIENDS/SIBLINGS:  35% Match Rate + 50% Effort + 15% Language Overlap
+//
+// Rationale: For couples, alignment matters most — partners who answer the same
+// way are genuinely in sync. For friends/siblings, people have different lives
+// and different ways of showing up. Effort (showing up at all) matters more than
+// answering identically. A 2/11 match between friends doesn't mean bad friends;
+// it means independent humans with different styles.
+//
 // Multi-player (3+) falls back to: 70% effort + 30% language overlap (no match rate).
-function calculateCompatibility(playerAnswers, playerLangTotals, playerScores, maxPossible) {
-  // 1. MATCH RATE — how many questions did both players answer identically?
-  // Only meaningful when there are exactly 2 players.
+function calculateCompatibility(mode, playerAnswers, playerLangTotals, playerScores, maxPossible) {
+  // 1. MATCH RATE — only meaningful for 2-player.
   let matchRate = 0;
   let matchedQuestions = 0;
   let totalQuestions = 0;
@@ -124,9 +133,7 @@ function calculateCompatibility(playerAnswers, playerLangTotals, playerScores, m
     matchRate = totalQuestions > 0 ? Math.round((matchedQuestions / totalQuestions) * 100) : 0;
   }
 
-  // 2. LANGUAGE OVERLAP — how similar are their love-language distributions?
-  // 100 minus the average per-category absolute difference (excluding 'none').
-  // Two players with identical breakdowns score 100. Totally different distributions score lower.
+  // 2. LANGUAGE OVERLAP — 100 minus avg per-category absolute difference (excluding 'none').
   let langOverlap = 0;
   if (playerLangTotals && playerLangTotals.length === 2 && playerLangTotals[0] && playerLangTotals[1]) {
     const a = playerLangTotals[0];
@@ -151,13 +158,24 @@ function calculateCompatibility(playerAnswers, playerLangTotals, playerScores, m
     avgEffort = Math.round(pcts.reduce((sum, p) => sum + p, 0) / pcts.length);
   }
 
-  // FINAL: weighted compatibility score
+  // FINAL: weighted compatibility/sync score, mode-aware
+  const isFriendOrSibling = mode === 'friends' || mode === 'siblings';
   let compatibilityScore;
+  let formulaDescription;
   if (totalQuestions > 0) {
-    compatibilityScore = Math.round((matchRate * 0.55) + (avgEffort * 0.30) + (langOverlap * 0.15));
+    if (isFriendOrSibling) {
+      // Softer formula: effort matters more than matching
+      compatibilityScore = Math.round((matchRate * 0.35) + (avgEffort * 0.50) + (langOverlap * 0.15));
+      formulaDescription = '35% Match Rate + 50% Avg Effort + 15% Language Overlap';
+    } else {
+      // Couples: matching matters most
+      compatibilityScore = Math.round((matchRate * 0.55) + (avgEffort * 0.30) + (langOverlap * 0.15));
+      formulaDescription = '55% Match Rate + 30% Avg Effort + 15% Language Overlap';
+    }
   } else {
     // Multi-player fallback (no match-rate available)
     compatibilityScore = Math.round((avgEffort * 0.70) + (langOverlap * 0.30));
+    formulaDescription = '70% Avg Effort + 30% Language Overlap';
   }
 
   return {
@@ -166,7 +184,9 @@ function calculateCompatibility(playerAnswers, playerLangTotals, playerScores, m
     totalQuestions,
     matchedQuestions,
     langOverlap,
-    avgEffort
+    avgEffort,
+    formulaDescription,
+    label: getCompatLabel(mode)
   };
 }
 
@@ -506,15 +526,12 @@ function buildPrompt(report) {
   const pcts = player_scores.map(s => Math.round((s / maxPossible) * 100));
   const langDisplay = getLangDisplay(mode);
 
-  // Calculate compatibility deterministically (no LLM math involved)
-  const compat = calculateCompatibility(player_answers, player_lang_totals, player_scores, maxPossible);
+  // Calculate compatibility/sync score deterministically (no LLM math involved)
+  const compat = calculateCompatibility(mode, player_answers, player_lang_totals, player_scores, maxPossible);
 
   const perPlayerData = player_names.map((name, i) => {
     const label = getLoveTypeLabel(mode, pcts[i]);
     const langs = player_lang_totals[i] || {};
-    // Locked order — same for every player so users can compare horizontally.
-    // 'none' (wishy-washy answers) is intentionally excluded — its info is now
-    // surfaced via the Effort Level badge on the score card.
     const orderedKeys = ['words', 'time', 'service', 'gifts', 'touch'];
     const allKeys = ['words', 'gifts', 'service', 'time', 'touch', 'none'];
     const totalAll = allKeys.reduce((s, k) => s + (langs[k] || 0), 0) || 1;
@@ -524,7 +541,6 @@ function buildPrompt(report) {
       count: langs[k] || 0,
       pct: Math.round(((langs[k] || 0) / totalAll) * 100)
     }));
-    // Effort level derived from total score percentage
     let effortLevel, effortClass;
     if (pcts[i] >= 70) { effortLevel = 'High Effort'; effortClass = 'effort-high'; }
     else if (pcts[i] >= 40) { effortLevel = 'Medium Effort'; effortClass = 'effort-medium'; }
@@ -571,21 +587,21 @@ ${breakdownStr}${surveyStr}`;
     ? `\n- MULTI-PLAYER MODE (${player_names.length} players): The Love Gap section MUST reference every player by name: ${player_names.join(', ')}. Do not leave anyone out.`
     : '';
 
-  // Compatibility breakdown block to give Claude.
+  // Compatibility breakdown block to give Claude. Match callout only meaningful for 2-player.
   const compatBreakdown = compat.totalQuestions > 0
     ? `
-COMPATIBILITY SCORE (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
-- Final Compatibility Score: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
+${compat.label.toUpperCase()} (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
+- Final ${compat.label}: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
 - Match Rate: ${compat.matchRate}% (${compat.matchedQuestions} of ${compat.totalQuestions} questions answered identically)
 - Language Overlap: ${compat.langOverlap}%
 - Average Effort: ${compat.avgEffort}%
-- Formula: 55% Match Rate + 30% Avg Effort + 15% Language Overlap`
+- Formula: ${compat.formulaDescription}`
     : `
-COMPATIBILITY SCORE (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
-- Final Compatibility Score: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
+${compat.label.toUpperCase()} (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECALCULATE):
+- Final ${compat.label}: ${compat.compatibilityScore}%  ← MUST appear in verdict-score-num
 - Language Overlap: ${compat.langOverlap}%
 - Average Effort: ${compat.avgEffort}%
-- Formula (multi-player): 70% Avg Effort + 30% Language Overlap`;
+- Formula (multi-player): ${compat.formulaDescription}`;
 
   // Hint to Claude about whether to do a "X out of Y matches" callout
   const matchCalloutHint = compat.totalQuestions > 0 && compat.matchedQuestions >= 7
@@ -613,7 +629,7 @@ CRITICAL RULES:
 - Show all FIVE language categories in each player's pattern card, in the EXACT order provided, including those at 0%. Do not hide any. Do not reorder.
 - Each score-card must include an effort badge using the CSS class provided (effort-high, effort-medium, or effort-low).
 - Use the EXACT percentages provided above.${multiPlayerRule}
-- COMPATIBILITY: The verdict-score-num MUST be the exact "Final Compatibility Score" provided above (${compat.compatibilityScore}%). Do not calculate your own. Do not average the player scores. Use the provided number, full stop.${matchCalloutHint}
+- ${compat.label.toUpperCase()}: The verdict-score-num MUST be the exact "Final ${compat.label}" provided above (${compat.compatibilityScore}%). Do not calculate your own. Do not average the player scores. Use the provided number, full stop. The verdict-score-label must read "${compat.label}".${matchCalloutHint}
 - RELATIONSHIP CONTEXT: When relationship length is short ("Less than a year" or "1-5 years") and scores are mid-range (Warm or Consistent labels), contextualize rather than criticize. A "Warm Lover" at 6 months is not a deficiency — it's appropriate for the discovery phase. Weave this nuance into the Verdict, Love Gap, and Recs sections naturally. For longer relationships with mid-range scores, you can be more direct about growth opportunities.
 - If players' Pre-Quiz answers DIVERGE (e.g., one says "Less than a year" and the other says "1-5 years", or different dynamics/values), feel free to playfully call this out in the Verdict or Love Gap section — it's a great conversation starter.
 
@@ -657,7 +673,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
     <p class="verdict-headline">"[Witty BuzzFeed-style headline specific to this pair, ~15 words]"</p>
     <div class="verdict-score">
       <div class="verdict-score-num">${compat.compatibilityScore}%</div>
-      <div class="verdict-score-label">Compatibility</div>
+      <div class="verdict-score-label">${compat.label}</div>
     </div>
   </div>
 
@@ -705,7 +721,7 @@ REMINDERS:
 - Each score card MUST include the effort-badge div with the exact CSS class given.
 - Pattern cards MUST show all 5 language categories in the EXACT order given, even at 0%.
 - Use the EXACT percentages provided.
-- The verdict-score-num MUST be ${compat.compatibilityScore}% (the calculated compatibility, NOT an average of player scores).
+- The verdict-score-num MUST be ${compat.compatibilityScore}% and the verdict-score-label MUST be "${compat.label}" (not an average of player scores).
 - Do not output anything outside REPORT START/END comments.
 - Do not include <style>, <html>, or <body> tags.
 - Keep the literal "<!-- EXTRAS_PLACEHOLDER -->" comment exactly where it is — we will splice real content there after.
@@ -870,7 +886,6 @@ export default async function handler(req, res) {
   }
 
   if (event.type !== 'checkout.session.completed') {
-    // Not a checkout completion — acknowledge and move on
     return res.status(200).json({ received: true });
   }
 
@@ -906,7 +921,6 @@ export default async function handler(req, res) {
     const genResult = await generateReportForId(paidReportId);
     if (!genResult.ok) {
       console.error('Report generation failed:', genResult.reason);
-      // Still acknowledge the webhook so Stripe doesn't retry
       return res.status(200).json({ received: true, generationFailed: true });
     }
 
@@ -916,7 +930,6 @@ export default async function handler(req, res) {
     const emailResult = await sendReportEmail(genResult.report);
     if (!emailResult.ok) {
       console.error('Email send failed:', emailResult.reason);
-      // Report is saved, email can be retried manually. Acknowledge webhook either way.
       return res.status(200).json({ received: true, emailFailed: true });
     }
 
@@ -926,7 +939,6 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Post-payment processing error:', err);
     await supabase.from('paid_reports').update({ report_status: 'failed' }).eq('id', paidReportId);
-    // Still acknowledge so Stripe doesn't spam retries
     return res.status(200).json({ received: true, error: err.message });
   }
 }
