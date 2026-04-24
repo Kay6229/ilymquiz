@@ -71,14 +71,15 @@ function escapeHtml(s) {
 }
 
 // Build Side by Side table + Note from Team as deterministic HTML, no LLM involved.
+// - Overview tier: just the note section
+// - Full tier: Side by Side (from real playerAnswers) + note section
 // This prevents hallucinated questions — we use the actual playerAnswers from the DB.
-function buildFullReportExtras(playerNames, playerAnswers) {
+function buildReportExtras(tier, mode, playerNames, playerAnswers) {
   const [nameA, nameB] = playerNames;
 
-  let sideBySide;
-  if (!playerAnswers || !playerAnswers[0] || !playerAnswers[1]) {
-    sideBySide = '';
-  } else {
+  // Side by Side — Full Report only
+  let sideBySide = '';
+  if (tier === 'full' && playerAnswers && playerAnswers[0] && playerAnswers[1]) {
     const a = playerAnswers[0];
     const b = playerAnswers[1];
     const qIndexes = Object.keys(a).map(n => parseInt(n, 10)).sort((x, y) => x - y);
@@ -112,13 +113,30 @@ function buildFullReportExtras(playerNames, playerAnswers) {
   </div>`;
   }
 
+  // Note from team — all tiers, mode-specific copy
+  let noteBody;
+  if (mode === 'friends') {
+    noteBody = `
+      <p class="note-body">We couldn't cover every inside joke, every late-night voice memo, or the thousand tiny ways friendship actually shows up. Nobody could.</p>
+      <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
+      <p class="note-body">Take what's useful, laugh at the rest, and unless it makes you a better friend, don't make any drastic changes.</p>`;
+  } else if (mode === 'siblings') {
+    noteBody = `
+      <p class="note-body">We couldn't possibly capture every childhood memory, every inside joke, or the thousand ways siblings actually show up for each other. Nobody could.</p>
+      <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
+      <p class="note-body">Take what's useful, laugh at the rest, and unless it makes you closer, don't make any drastic changes.</p>`;
+  } else {
+    // couples (default)
+    noteBody = `
+      <p class="note-body">We didn't cover every aspect of chemistry 😏. And there are a thousand ways each of these moments could play out that we couldn't possibly list.</p>
+      <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
+      <p class="note-body">Take what's useful, laugh at the rest, and unless it's to love your person better, don't make any drastic changes.</p>`;
+  }
+
   const noteSection = `
   <div class="section note-section">
     <div class="note-card">
-      <h2 class="note-title">A Note From Our Team</h2>
-      <p class="note-body">We didn't cover every aspect of chemistry 😏. And there are a thousand ways each of these moments could play out that we couldn't possibly list.</p>
-      <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
-      <p class="note-body">Take what's useful, laugh at the rest, and unless it's to love your person better, don't make any drastic changes.</p>
+      <h2 class="note-title">A Note From Our Team</h2>${noteBody}
       <p class="note-sig">Xoxo, ILYMQuiz 💕</p>
     </div>
   </div>`;
@@ -376,7 +394,7 @@ ${breakdownStr}`;
   const winnerIdx = player_scores.indexOf(Math.max(...player_scores));
   const winnerName = player_names[winnerIdx];
 
-  const fullReportExtras = tier === 'full' ? buildFullReportExtras(player_names, player_answers) : '';
+  const reportExtras = buildReportExtras(tier, mode, player_names, player_answers);
   const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
 MODE: ${mode}
@@ -485,7 +503,7 @@ REMINDERS:
 - Do not include <style>, <html>, or <body> tags.
 - Keep the literal "<!-- EXTRAS_PLACEHOLDER -->" comment exactly where it is — we will splice real content there after.
 `;
-  return { prompt, fullReportExtras };
+  return { prompt, reportExtras };
 }
 
 async function generateReportForId(paidReportId) {
@@ -500,7 +518,7 @@ async function generateReportForId(paidReportId) {
     return { ok: false, reason: 'not_found' };
   }
 
-  const { prompt, fullReportExtras } = buildPrompt(report);
+  const { prompt, reportExtras } = buildPrompt(report);
 
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
@@ -528,9 +546,9 @@ async function generateReportForId(paidReportId) {
   // Splice deterministic extras (Side by Side + Note from Team) in place of the placeholder.
   // If Claude dropped the placeholder, fall back to appending before the footer.
   if (reportBody.includes('<!-- EXTRAS_PLACEHOLDER -->')) {
-    reportBody = reportBody.replace('<!-- EXTRAS_PLACEHOLDER -->', fullReportExtras);
-  } else if (fullReportExtras) {
-    reportBody = reportBody.replace(/<div class="footer">/, fullReportExtras + '\n<div class="footer">');
+    reportBody = reportBody.replace('<!-- EXTRAS_PLACEHOLDER -->', reportExtras);
+  } else if (reportExtras) {
+    reportBody = reportBody.replace(/<div class="footer">/, reportExtras + '\n<div class="footer">');
   }
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
