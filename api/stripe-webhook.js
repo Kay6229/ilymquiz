@@ -115,7 +115,7 @@ function buildFullReportExtras(playerNames, playerAnswers) {
   const noteSection = `
   <div class="section note-section">
     <div class="note-card">
-      <div class="note-eyebrow">A note from our team</div>
+      <h2 class="note-title">A Note From Our Team</h2>
       <p class="note-body">We didn't cover every aspect of chemistry 😏. And there are a thousand ways each of these moments could play out that we couldn't possibly list.</p>
       <p class="note-body">The math is just the math. And only <strong>you</strong> know what you feel.</p>
       <p class="note-body">Take what's useful, laugh at the rest, and unless it's to love your person better, don't make any drastic changes.</p>
@@ -185,6 +185,10 @@ const REPORT_CSS = `
   .player-a .sc-pct { color: var(--pink-deep); }
   .player-b .sc-pct { color: var(--blue-deep); }
   .sc-style { font-size: 15px; color: var(--ink); font-weight: 700; }
+  .effort-badge { display: inline-block; margin-top: 12px; padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .effort-badge.effort-high { background: #d8efe0; color: #1a6b34; }
+  .effort-badge.effort-medium { background: #fce8c4; color: #8a5a06; }
+  .effort-badge.effort-low { background: #fbd6d6; color: #8a1818; }
   .verdict { background: linear-gradient(135deg, var(--pink), var(--pink-deep)); color: #fff; text-align: center; padding: 48px 40px; }
   .verdict-eyebrow { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; opacity: 0.85; margin-bottom: 14px; }
   .verdict-headline { font-size: 24px; font-weight: 700; line-height: 1.35; margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto; letter-spacing: -0.01em; }
@@ -246,7 +250,7 @@ const REPORT_CSS = `
   /* Note from team (closing section) */
   .note-section { background: linear-gradient(180deg, #fff, var(--pink-soft)); }
   .note-card { text-align: center; max-width: 520px; margin: 0 auto; }
-  .note-eyebrow { font-size: 10px; font-weight: 800; color: var(--pink); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 20px; }
+  .note-title { font-size: 28px; font-weight: 900; color: var(--ink); letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 24px; }
   .note-body { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 14px; }
   .note-body strong { color: var(--ink); font-weight: 800; }
   .note-sig { font-size: 15px; color: var(--pink-deep); font-weight: 700; margin-top: 20px; }
@@ -286,6 +290,7 @@ const REPORT_CSS = `
     .score-card { padding: 22px 18px; }
     .sc-pct { font-size: 48px; }
     .sc-style { font-size: 14px; }
+    .effort-badge { font-size: 10px; padding: 4px 12px; margin-top: 10px; }
 
     /* Verdict */
     .verdict { padding: 36px 22px; }
@@ -315,6 +320,7 @@ const REPORT_CSS = `
     .sbs-ans-text { font-size: 13px; }
 
     /* Note section */
+    .note-title { font-size: 22px; margin-bottom: 18px; }
     .note-body { font-size: 14.5px; }
     .note-sig { font-size: 14px; }
 
@@ -334,16 +340,24 @@ function buildPrompt(report) {
   const perPlayerData = player_names.map((name, i) => {
     const label = getLoveTypeLabel(mode, pcts[i]);
     const langs = player_lang_totals[i] || {};
+    // Locked order — same for every player so users can compare horizontally.
+    // 'none' (wishy-washy answers) is intentionally excluded — its info is now
+    // surfaced via the Effort Level badge on the score card.
+    const orderedKeys = ['words', 'time', 'service', 'gifts', 'touch'];
     const allKeys = ['words', 'gifts', 'service', 'time', 'touch', 'none'];
-    const total = allKeys.reduce((s, k) => s + (langs[k] || 0), 0) || 1;
-    const breakdown = allKeys.map(k => ({
+    const totalAll = allKeys.reduce((s, k) => s + (langs[k] || 0), 0) || 1;
+    const breakdown = orderedKeys.map(k => ({
       key: k,
       display: langDisplay[k],
       count: langs[k] || 0,
-      pct: Math.round(((langs[k] || 0) / total) * 100)
+      pct: Math.round(((langs[k] || 0) / totalAll) * 100)
     }));
-    breakdown.sort((a, b) => b.pct - a.pct);
-    return { name, score: player_scores[i], pct: pcts[i], label, breakdown };
+    // Effort level derived from total score percentage
+    let effortLevel, effortClass;
+    if (pcts[i] >= 70) { effortLevel = 'High Effort'; effortClass = 'effort-high'; }
+    else if (pcts[i] >= 40) { effortLevel = 'Medium Effort'; effortClass = 'effort-medium'; }
+    else { effortLevel = 'Low Effort'; effortClass = 'effort-low'; }
+    return { name, score: player_scores[i], pct: pcts[i], label, breakdown, effortLevel, effortClass };
   });
 
   const dataBlock = perPlayerData.map(p => {
@@ -351,7 +365,8 @@ function buildPrompt(report) {
     return `${p.name}:
   Score: ${p.score}/${maxPossible} (${p.pct}%)
   Official Label: ${p.label}
-  Language breakdown (use these EXACT percentages, show ALL six including 0%):
+  Effort Level: ${p.effortLevel} (CSS class: ${p.effortClass})
+  Language breakdown (use these EXACT percentages and EXACT order, show ALL FIVE including 0%):
 ${breakdownStr}`;
   }).join('\n\n');
 
@@ -376,7 +391,8 @@ WINNER: ${winnerName}
 
 CRITICAL RULES:
 - The "Official Label" above (e.g. "Warm Lover", "All-in Lover") is what you MUST put in the sc-style field for each player. Do NOT invent custom labels.
-- Show all SIX language categories in each player's pattern card, including those at 0%. Do not hide any.
+- Show all FIVE language categories in each player's pattern card, in the EXACT order provided, including those at 0%. Do not hide any. Do not reorder.
+- Each score-card must include an effort badge using the CSS class provided (effort-high, effort-medium, or effort-low).
 - Use the EXACT percentages provided above.
 
 Write a complete HTML document wrapped in the structure below. Do NOT include <html>, <head>, or <body> tags. Start with "<!-- REPORT START -->" and end with "<!-- REPORT END -->".
@@ -410,7 +426,7 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
     <h2 class="h2">Here's how each of you <span class="accent">actually scored.</span></h2>
     <p class="body-text">[Short 1-2 sentence setup]</p>
     <div class="score-grid">
-      [For each player, produce a score-card with class "player-a" or "player-b". Include: sc-name (player's name, uppercase), sc-pct (their percentage), sc-style (their EXACT Official Label).]
+      [For each player, produce a score-card with class "player-a" or "player-b". Include in this order: sc-name (player's name, uppercase), sc-pct (their percentage), sc-style (their EXACT Official Label), and an effort-badge div with the EXACT CSS class provided (e.g. <div class="effort-badge effort-high">High Effort</div>).]
     </div>
   </div>
 
@@ -462,7 +478,8 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
 
 REMINDERS:
 - sc-style MUST use the Official Label provided, not an invented one.
-- Pattern cards MUST show all 6 language categories, even at 0%.
+- Each score card MUST include the effort-badge div with the exact CSS class given.
+- Pattern cards MUST show all 5 language categories in the EXACT order given, even at 0%.
 - Use the EXACT percentages provided.
 - Do not output anything outside REPORT START/END comments.
 - Do not include <style>, <html>, or <body> tags.
