@@ -1117,6 +1117,19 @@ function showResultsFromAPI(data){
 
 function showResults(){
   showScreen('s-results');
+  // Save quiz state to localStorage so results survive the Stripe redirect back button
+  try{
+    var stateToSave={
+      mode:mode,
+      playerNames:playerNames,
+      scores:scores,
+      langTotals:langTotals,
+      playerSurveys:playerSurveys,
+      playerAnswers:(typeof playerAnswers!=='undefined'?playerAnswers:null),
+      savedAt:Date.now()
+    };
+    localStorage.setItem('ilymquiz_results',JSON.stringify(stateToSave));
+  }catch(e){/* localStorage may be disabled; silently fail */}
   var th=t();
   var ranked=playerNames.map(function(n,i){return{name:n,score:scores[i],pct:pct(scores[i]),langs:langTotals[i],survey:playerSurveys[i],origIdx:i};});
   ranked.sort(function(a,b){return b.score-a.score;});
@@ -1580,6 +1593,44 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
     document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth'});
   })
   .catch(function(err){console.error('Link load error:',err);});
+})();
+
+// Restore quiz results on page load if user came back from Stripe
+(function restoreSavedResults(){
+  try{
+    // Skip if URL has other params (long-distance link, stripe cancel, etc.)
+    var urlParams=new URLSearchParams(window.location.search);
+    if(urlParams.get('link')||urlParams.get('id'))return;
+    var saved=localStorage.getItem('ilymquiz_results');
+    if(!saved)return;
+    var data=JSON.parse(saved);
+    // Expire after 24 hours
+    if(!data.savedAt||Date.now()-data.savedAt>24*60*60*1000){
+      localStorage.removeItem('ilymquiz_results');
+      return;
+    }
+    // Only restore if we have the essentials
+    if(!data.mode||!data.playerNames||!data.scores)return;
+    // Check if user wants to restore (show banner on homepage)
+    var banner=document.createElement('div');
+    banner.style.cssText='position:fixed;top:0;left:0;right:0;background:#D4537E;color:#fff;padding:14px 20px;text-align:center;z-index:9999;font-size:14px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.15)';
+    banner.innerHTML='Pick up where you left off? <button id="restore-yes" style="background:#fff;color:#D4537E;border:none;padding:6px 16px;border-radius:999px;font-weight:800;margin-left:12px;cursor:pointer;font-size:13px">See your results</button> <button id="restore-no" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.5);padding:6px 14px;border-radius:999px;font-weight:600;margin-left:6px;cursor:pointer;font-size:13px">Start fresh</button>';
+    document.body.appendChild(banner);
+    document.getElementById('restore-yes').onclick=function(){
+      mode=data.mode;
+      playerNames=data.playerNames;
+      scores=data.scores;
+      langTotals=data.langTotals||playerNames.map(function(){return{};});
+      playerSurveys=data.playerSurveys||playerNames.map(function(){return{};});
+      if(typeof playerAnswers!=='undefined'&&data.playerAnswers)playerAnswers=data.playerAnswers;
+      banner.remove();
+      showResults();
+    };
+    document.getElementById('restore-no').onclick=function(){
+      localStorage.removeItem('ilymquiz_results');
+      banner.remove();
+    };
+  }catch(e){/* silently fail if anything goes wrong */}
 })();
 </script>
 </body>
