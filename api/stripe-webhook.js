@@ -158,6 +158,67 @@ const REPORT_CSS = `
   .footer-logo { font-size: 13px; font-weight: 900; margin-bottom: 6px; }
   .footer-logo span { color: var(--pink); }
   .footer-text { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  /* Mobile adjustments — desktop unchanged above */
+  @media (max-width: 640px) {
+    body { padding: 16px 8px; }
+    .report { border-radius: 18px; }
+
+    /* Cover */
+    .cover { padding: 40px 22px 36px; }
+    .cover-title { font-size: 40px; }
+    .cover-sub { font-size: 15px; margin-bottom: 24px; }
+    .cover-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 18px;
+      width: 100%;
+      max-width: 320px;
+      align-items: center;
+    }
+    .cm-divider { display: none; }
+
+    /* Winner */
+    .winner { padding: 36px 22px; }
+    .winner-name { font-size: 32px; }
+    .winner-tagline { font-size: 14px; line-height: 1.5; }
+
+    /* All sections */
+    .section { padding: 32px 22px; }
+    .h2 { font-size: 24px; }
+    .body-text { font-size: 15px; }
+
+    /* Score grid — stack vertically on mobile */
+    .score-grid { grid-template-columns: 1fr; gap: 14px; }
+    .score-card { padding: 22px 18px; }
+    .sc-pct { font-size: 48px; }
+    .sc-style { font-size: 14px; }
+
+    /* Verdict */
+    .verdict { padding: 36px 22px; }
+    .verdict-headline { font-size: 20px; line-height: 1.4; }
+    .verdict-score-num { font-size: 46px; }
+    .verdict-score { padding: 14px 32px; }
+
+    /* Pattern grid — stack vertically */
+    .pattern-grid { grid-template-columns: 1fr; gap: 16px; }
+    .pattern-card { padding: 20px 18px; }
+
+    /* Gap callout */
+    .gap-callout { padding: 24px 18px; }
+    .gap-title { font-size: 19px; }
+
+    /* Recs — fix the overflowing number badge layout */
+    .rec { padding: 20px 16px; gap: 14px; }
+    .rec-num { width: 38px; height: 38px; font-size: 16px; }
+    .rec-title { font-size: 13px; line-height: 1.35; }
+    .rec-desc { font-size: 13.5px; }
+
+    /* Footer */
+    .footer { padding: 24px 20px; }
+    .footer-text { font-size: 10.5px; }
+  }
 </style>
 `;
 
