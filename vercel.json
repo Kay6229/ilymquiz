@@ -7,6 +7,10 @@
     {
       "source": "/quiz/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/report",
+      "destination": "/report.html"
     }
   ]
 }
