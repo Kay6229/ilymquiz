@@ -59,6 +59,30 @@ function getLangDisplay(mode) {
   };
 }
 
+// Pretty labels for the 4 pre-question fields, mode-specific where it matters.
+function getSurveyLabels(mode) {
+  let durLabel, dynLabel, valLabel;
+  if (mode === 'friends') {
+    durLabel = 'How long you\'ve been friends';
+    dynLabel = 'Your friendship vibe';
+    valLabel = 'What you value most';
+  } else if (mode === 'siblings') {
+    durLabel = 'How long you\'ve known each other';
+    dynLabel = 'Your sibling dynamic';
+    valLabel = 'What matters most';
+  } else {
+    durLabel = 'How long you\'ve been together';
+    dynLabel = 'Your relationship dynamic';
+    valLabel = 'What you value most';
+  }
+  return {
+    ll: 'Your love language',
+    dur: durLabel,
+    dyn: dynLabel,
+    val: valLabel
+  };
+}
+
 // Escape user-supplied strings before splicing into HTML (questions/answers from DB)
 function escapeHtml(s) {
   if (s == null) return '';
@@ -72,9 +96,9 @@ function escapeHtml(s) {
 
 // Build Side by Side table + Note from Team as deterministic HTML, no LLM involved.
 // - Overview tier: just the note section
-// - Full tier: Side by Side (from real playerAnswers) + note section
+// - Full tier: Side by Side (from real playerAnswers + playerSurveys) + note section
 // This prevents hallucinated questions — we use the actual playerAnswers from the DB.
-function buildReportExtras(tier, mode, playerNames, playerAnswers) {
+function buildReportExtras(tier, mode, playerNames, playerAnswers, playerSurveys) {
   const [nameA, nameB] = playerNames;
 
   // Side by Side — Full Report only
@@ -82,6 +106,35 @@ function buildReportExtras(tier, mode, playerNames, playerAnswers) {
   if (tier === 'full' && playerAnswers && playerAnswers[0] && playerAnswers[1]) {
     const a = playerAnswers[0];
     const b = playerAnswers[1];
+
+    // Pre-question rows — 4 cards at the top, one per survey field, per-player.
+    // Rendered BEFORE the main question rows so they appear first in the section.
+    let surveyRows = '';
+    if (playerSurveys && playerSurveys[0] && playerSurveys[1]) {
+      const sa = playerSurveys[0];
+      const sb = playerSurveys[1];
+      const labels = getSurveyLabels(mode);
+      const fieldOrder = ['ll', 'dyn', 'val', 'dur'];
+      surveyRows = fieldOrder.map((field, idx) => {
+        const va = sa[field];
+        const vb = sb[field];
+        if (!va || !vb) return '';
+        const isMatch = va === vb;
+        return `
+        <div class="sbs-row sbs-pre${isMatch ? ' sbs-match' : ''}">
+          <div class="sbs-row-head">
+            <div class="sbs-qnum">P${idx + 1}</div>
+            <div class="sbs-qtext">${escapeHtml(labels[field])}</div>
+            ${isMatch ? '<div class="sbs-match-badge">Match</div>' : ''}
+          </div>
+          <div class="sbs-row-answers">
+            <div class="sbs-ans"><span class="sbs-ans-label sbs-ans-a">${escapeHtml(nameA)}</span><span class="sbs-ans-text">${escapeHtml(va)}</span></div>
+            <div class="sbs-ans"><span class="sbs-ans-label sbs-ans-b">${escapeHtml(nameB)}</span><span class="sbs-ans-text">${escapeHtml(vb)}</span></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
     const qIndexes = Object.keys(a).map(n => parseInt(n, 10)).sort((x, y) => x - y);
     const rows = qIndexes.map(qi => {
       const qa = a[qi];
@@ -108,6 +161,7 @@ function buildReportExtras(tier, mode, playerNames, playerAnswers) {
     <h2 class="h2">Side by side, <span class="accent">answer by answer.</span></h2>
     <p class="body-text">Every question. Both picks. Matches get a little green moment.</p>
     <div class="sbs-wrap">
+      ${surveyRows}
       ${rows}
     </div>
   </div>`;
@@ -275,6 +329,8 @@ const REPORT_CSS = `
   .sbs-row-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
   .sbs-qnum { font-size: 18px; font-weight: 900; color: var(--pink); line-height: 1; flex-shrink: 0; }
   .sbs-row.sbs-match .sbs-qnum { color: var(--green); }
+  .sbs-row.sbs-pre .sbs-qnum { color: var(--purple-deep); font-size: 14px; }
+  .sbs-row.sbs-pre.sbs-match .sbs-qnum { color: var(--green); }
   .sbs-qtext { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; flex: 1; }
   .sbs-match-badge { font-size: 9px; font-weight: 900; background: var(--green); color: #fff; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
   .sbs-row-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 10px; border-top: 1px solid #f5f0ec; }
@@ -370,7 +426,7 @@ const REPORT_CSS = `
 `;
 
 function buildPrompt(report) {
-  const { mode, tier, player_names, player_scores, player_lang_totals, player_answers } = report;
+  const { mode, tier, player_names, player_scores, player_lang_totals, player_answers, player_surveys } = report;
   const maxPossible = 44;
   const pcts = player_scores.map(s => Math.round((s / maxPossible) * 100));
   const langDisplay = getLangDisplay(mode);
@@ -398,14 +454,21 @@ function buildPrompt(report) {
     return { name, score: player_scores[i], pct: pcts[i], label, breakdown, effortLevel, effortClass };
   });
 
-  const dataBlock = perPlayerData.map(p => {
+  const dataBlock = perPlayerData.map((p, i) => {
     const breakdownStr = p.breakdown.map(b => `   - ${b.display}: ${b.pct}% (${b.count} answers)`).join('\n');
+    const survey = player_surveys && player_surveys[i] ? player_surveys[i] : null;
+    const surveyStr = survey ? `
+  Pre-Quiz Context:
+   - Love Language: ${survey.ll || 'Not specified'}
+   - Dynamic: ${survey.dyn || 'Not specified'}
+   - Values Most: ${survey.val || 'Not specified'}
+   - Relationship Length: ${survey.dur || 'Not specified'}` : '';
     return `${p.name}:
   Score: ${p.score}/${maxPossible} (${p.pct}%)
   Official Label: ${p.label}
   Effort Level: ${p.effortLevel} (CSS class: ${p.effortClass})
   Language breakdown (use these EXACT percentages and EXACT order, show ALL FIVE including 0%):
-${breakdownStr}`;
+${breakdownStr}${surveyStr}`;
   }).join('\n\n');
 
   const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -430,7 +493,7 @@ ${breakdownStr}`;
     ? `\n- MULTI-PLAYER MODE (${player_names.length} players): The Love Gap section MUST reference every player by name: ${player_names.join(', ')}. Do not leave anyone out.`
     : '';
 
-  const reportExtras = buildReportExtras(tier, mode, player_names, player_answers);
+  const reportExtras = buildReportExtras(tier, mode, player_names, player_answers, player_surveys);
   const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
 MODE: ${mode}
@@ -448,6 +511,8 @@ CRITICAL RULES:
 - Show all FIVE language categories in each player's pattern card, in the EXACT order provided, including those at 0%. Do not hide any. Do not reorder.
 - Each score-card must include an effort badge using the CSS class provided (effort-high, effort-medium, or effort-low).
 - Use the EXACT percentages provided above.${multiPlayerRule}
+- RELATIONSHIP CONTEXT: When relationship length is short ("Less than a year" or "1-5 years") and scores are mid-range (Warm or Consistent labels), contextualize rather than criticize. A "Warm Lover" at 6 months is not a deficiency — it's appropriate for the discovery phase. Weave this nuance into the Verdict, Love Gap, and Recs sections naturally. For longer relationships with mid-range scores, you can be more direct about growth opportunities.
+- If players' Pre-Quiz answers DIVERGE (e.g., one says "Less than a year" and the other says "1-5 years", or different dynamics/values), feel free to playfully call this out in the Verdict or Love Gap section — it's a great conversation starter.
 
 Write a complete HTML document wrapped in the structure below. Do NOT include <html>, <head>, or <body> tags. Start with "<!-- REPORT START -->" and end with "<!-- REPORT END -->".
 
