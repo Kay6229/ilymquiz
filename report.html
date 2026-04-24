@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Report · ILYMQuiz</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700;1,900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; background: #f5f0ec; color: #111; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f0ec; color: #111; min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
   /* Loading state */
   .loading-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
@@ -23,10 +21,10 @@
     margin-bottom: 32px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-title { font-family: 'Fraunces', Georgia, serif; font-size: 32px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 14px; max-width: 440px; }
-  .loading-sub { font-size: 15px; color: #666; line-height: 1.7; max-width: 380px; margin-bottom: 28px; }
+  .loading-title { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 14px; max-width: 440px; }
+  .loading-sub { font-size: 15px; color: #666; line-height: 1.7; max-width: 380px; margin-bottom: 28px; font-weight: 500; }
   .loading-steps { display: flex; flex-direction: column; gap: 10px; background: #fff; border-radius: 16px; padding: 20px 24px; max-width: 380px; width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .step-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #666; }
+  .step-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #666; font-weight: 500; }
   .step-item.done { color: #22a355; }
   .step-item.active { color: #111; font-weight: 700; }
   .step-check { font-size: 16px; }
@@ -34,8 +32,8 @@
   /* Error state */
   .error-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
   .error-icon { font-size: 56px; margin-bottom: 20px; }
-  .error-title { font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 900; margin-bottom: 12px; }
-  .error-sub { font-size: 15px; color: #666; line-height: 1.7; max-width: 420px; margin-bottom: 24px; }
+  .error-title { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+  .error-sub { font-size: 15px; color: #666; line-height: 1.7; max-width: 420px; margin-bottom: 24px; font-weight: 500; }
   .error-btn { display: inline-block; padding: 14px 28px; background: #D4537E; color: #fff; text-decoration: none; border-radius: 999px; font-weight: 800; font-size: 15px; }
 
   /* Report container */
@@ -48,13 +46,13 @@
 <div class="loading-wrap" id="loading-state">
   <div class="loading-logo"><span>ILYM</span>Quiz</div>
   <div class="spinner"></div>
-  <h1 class="loading-title">Generating your personalized report</h1>
-  <p class="loading-sub">Our AI is reading your answers and writing something just for you. This takes about 20 seconds.</p>
+  <h1 class="loading-title">Scientists in the love lab are on it</h1>
+  <p class="loading-sub">We're calibrating your receipts, crunching the compatibility numbers, and writing your verdict. Hang tight.</p>
   <div class="loading-steps">
     <div class="step-item done" id="step-1"><span class="step-check">✓</span> Payment received</div>
-    <div class="step-item active" id="step-2"><span class="step-check">⏳</span> Analyzing your answers</div>
-    <div class="step-item" id="step-3"><span class="step-check">○</span> Writing your report</div>
-    <div class="step-item" id="step-4"><span class="step-check">○</span> Sending your email copy</div>
+    <div class="step-item active" id="step-2"><span class="step-check">⏳</span> Reading the fine print</div>
+    <div class="step-item" id="step-3"><span class="step-check">○</span> Writing the verdict</div>
+    <div class="step-item" id="step-4"><span class="step-check">○</span> Emailing your copy</div>
   </div>
 </div>
 
@@ -66,7 +64,7 @@
   <a class="error-btn" href="https://www.ilymquiz.com">Back to ILYMQuiz</a>
 </div>
 
-<!-- Report Container (filled in when ready) -->
+<!-- Report Container -->
 <div id="report-container" style="display:none"></div>
 
 <script>
@@ -80,7 +78,7 @@
   }
 
   var pollCount = 0;
-  var maxPolls = 60; // 60 polls * 2s = 2 minutes max
+  var maxPolls = 120; // 120 polls × 2s = 4 minutes max
 
   function showError(title, message) {
     document.getElementById('loading-state').style.display = 'none';
@@ -92,27 +90,16 @@
   function showReport(html) {
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('report-container').style.display = 'block';
-    // Extract just the body content from the full HTML returned
     var bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
     var headMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
 
     if (headMatch) {
-      // Inject the <style> tags from the head into our page
       var styleMatches = headMatch[1].match(/<style[^>]*>[\s\S]*?<\/style>/gi);
-      var linkMatches = headMatch[1].match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
-
       if (styleMatches) {
         styleMatches.forEach(function(s) {
           var div = document.createElement('div');
           div.innerHTML = s;
           document.head.appendChild(div.firstChild);
-        });
-      }
-      if (linkMatches) {
-        linkMatches.forEach(function(l) {
-          var div = document.createElement('div');
-          div.innerHTML = l;
-          if (div.firstChild) document.head.appendChild(div.firstChild);
         });
       }
     }
@@ -148,13 +135,13 @@
   function pollStatus() {
     pollCount++;
 
-    // After ~10 seconds, show "writing your report" step
-    if (pollCount === 5) updateLoadingSteps(3);
-    // After ~30 seconds, show "sending email" step
-    if (pollCount === 15) updateLoadingSteps(4);
+    // After ~15 seconds, show "writing" step
+    if (pollCount === 7) updateLoadingSteps(3);
+    // After ~60 seconds, show "emailing" step
+    if (pollCount === 30) updateLoadingSteps(4);
 
     if (pollCount > maxPolls) {
-      showError('This is taking longer than expected', 'Your report is still being generated. Please check your email in a few minutes, or reach out to hello@kaspenco.com if you don\'t receive it.');
+      showError('This is taking a little long', 'Your report is still being prepared. Please check your email in a few minutes, or reach out to hello@kaspenco.com if you don\'t receive it.');
       return;
     }
 
@@ -168,18 +155,15 @@
         } else if (data.status === 'awaiting_payment') {
           showError('Payment not confirmed yet', 'If you just completed payment, please wait 30 seconds and refresh this page.');
         } else {
-          // Still generating — poll again in 2 seconds
           setTimeout(pollStatus, 2000);
         }
       })
       .catch(function(err) {
         console.error('Polling error:', err);
-        // Retry after a short delay
         setTimeout(pollStatus, 3000);
       });
   }
 
-  // Start polling immediately
   pollStatus();
 })();
 </script>
