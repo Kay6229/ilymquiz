@@ -77,6 +77,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 
 /* SETUP */
 .setup-back{display:flex;align-items:center;gap:8px;font-size:13px;color:#999;cursor:pointer;margin-bottom:20px;border:none;background:none;padding:0;touch-action:manipulation}
+.question-back{display:flex;align-items:center;gap:8px;font-size:13px;color:#999;cursor:pointer;margin-bottom:14px;border:none;background:none;padding:6px 2px;touch-action:manipulation;font-weight:600}
+.question-back:hover{color:#555}
 h2.setup-title{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
 .setup-sub{font-size:13px;color:#666;margin-bottom:20px;line-height:1.6}
 .required-notice{background:#fff8e1;border:1.5px solid #ffd54f;border-radius:10px;padding:10px 14px;font-size:12px;color:#7a5c00;margin-bottom:18px;font-weight:500}
@@ -364,7 +366,6 @@ footer a{color:#aaa;text-decoration:none}
     <button class="setup-back" onclick="backToModes()">← Back</button>
     <h2 class="setup-title" id="setup-title">Set up your quiz</h2>
     <p class="setup-sub">Pick your settings. Each person will answer their own questions when it is their turn.</p>
-    <div class="required-notice">⚡ Every player answers their own questions on their turn. Be honest — the math depends on it.</div>
 
     <div class="setup-section">
       <div class="setup-section-label">Are you in the same place? <span class="req">*</span></div>
@@ -401,7 +402,7 @@ footer a{color:#aaa;text-decoration:none}
     </div>
 
     <button class="btn btn-primary btn-full couple-btn btn-disabled" id="start-btn" onclick="startQuiz()">Let's go</button>
-    <p style="font-size:12px;color:#bbb;text-align:center;margin-top:10px">Fill in names and location to unlock</p>
+    <p style="font-size:12px;color:#bbb;text-align:center;margin-top:10px">Fill in names to unlock</p>
   </div>
 
   <!-- PLAYER SURVEY SCREEN -->
@@ -419,6 +420,7 @@ footer a{color:#aaa;text-decoration:none}
   <!-- QUIZ SCREEN -->
   <div class="screen" id="s-quiz">
     <div class="turn-badge couple-turn" id="turn-badge"></div>
+    <button class="question-back" id="question-back-btn" onclick="prevQ()" style="display:none">← Back</button>
     <div class="progress-bar-wrap">
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill" style="width:9%"></div>
@@ -913,14 +915,36 @@ function renderQ(){
   var fill=document.getElementById('progress-fill');
   if(fill)fill.style.width=Math.max(9,Math.round((currentQ+1)/QUESTIONS.length*100))+'%';
   document.getElementById('q-text').textContent=q.question;
+
+  // Show back button only on Q2+
+  var backBtn=document.getElementById('question-back-btn');
+  if(backBtn)backBtn.style.display=(currentQ>0)?'flex':'none';
+
+  // Check if this question was already answered — if so, restore the selection
+  var prevAnswerIdx=null;
+  if(playerAnswers[currentPlayer]&&playerAnswers[currentPlayer][currentQ]!=null){
+    prevAnswerIdx=playerAnswers[currentPlayer][currentQ].answerIdx;
+  }
+
   var letters=['A','B','C','D','E'],ac=document.getElementById('answers');ac.innerHTML='';
   q.answers.forEach(function(ans,i){
     var btn=document.createElement('button');btn.className='ans-btn';
     btn.innerHTML='<span class="ans-letter">'+letters[i]+'</span><span>'+ans.text+'</span>';
     btn.onclick=(function(b,idx){return function(){pickAnswer(b,idx);};})(btn,i);
     ac.appendChild(btn);
+    // Restore previous selection visually
+    if(prevAnswerIdx===i){
+      btn.classList.add('selected');btn.classList.add(t().ansCls);
+    }
   });
-  selectedIdx=null;document.getElementById('next-btn').style.display='none';
+
+  if(prevAnswerIdx!==null){
+    selectedIdx=prevAnswerIdx;
+    document.getElementById('next-btn').style.display='inline-block';
+  }else{
+    selectedIdx=null;
+    document.getElementById('next-btn').style.display='none';
+  }
 }
 
 function pickAnswer(btn,idx){
@@ -929,11 +953,38 @@ function pickAnswer(btn,idx){
   selectedIdx=idx;document.getElementById('next-btn').style.display='inline-block';
 }
 
+function prevQ(){
+  if(currentQ<=0)return;
+  currentQ--;
+  renderQ();
+}
+
 function nextQ(){
   if(selectedIdx===null)return;
   var ans=QUESTIONS[currentQ].answers[selectedIdx];
+
+  // If this question was already answered previously (user went back and is re-submitting),
+  // reverse the previous answer's impact before applying the new one
+  if(playerAnswers[currentPlayer]&&playerAnswers[currentPlayer][currentQ]!=null){
+    var prev=playerAnswers[currentPlayer][currentQ];
+    scores[currentPlayer]-=prev.points;
+    langTotals[currentPlayer][prev.lang]=Math.max(0,(langTotals[currentPlayer][prev.lang]||0)-1);
+  }
+
+  // Apply new answer impact
   scores[currentPlayer]+=ans.points;
   langTotals[currentPlayer][ans.lang]=(langTotals[currentPlayer][ans.lang]||0)+1;
+
+  // Save this answer so back button can restore and so it's available for the report
+  if(!playerAnswers[currentPlayer])playerAnswers[currentPlayer]={};
+  playerAnswers[currentPlayer][currentQ]={
+    answerIdx:selectedIdx,
+    text:ans.text,
+    points:ans.points,
+    lang:ans.lang,
+    question:QUESTIONS[currentQ].question
+  };
+
   if(currentQ<QUESTIONS.length-1){currentQ++;renderQ();}
   else{
     if(quizLocation==='distance'){
