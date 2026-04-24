@@ -518,7 +518,9 @@ Write a complete HTML document wrapped in the structure below. Do NOT include <h
     <h2 class="h2">Three things that'll <span class="accent">actually</span> move the needle.</h2>
     <p class="body-text">[Setup sentence]</p>
     <div class="recs">
-      [THREE rec divs, numbered 1/2/3, each with rec-title (ALL CAPS, references a player by name) and rec-desc (~2 sentences, concrete and actionable)]
+      [THREE rec divs. Each MUST follow this EXACT structure with elements in this EXACT order — do not rearrange, do not skip, do not add wrappers:
+      <div class="rec"><div class="rec-num">1</div><div class="rec-content"><div class="rec-title">PLAYER NAME: TITLE IN ALL CAPS</div><div class="rec-desc">Two sentences, concrete and actionable.</div></div></div>
+      Repeat for rec-num 2 and rec-num 3. The rec-num div MUST always come first (before rec-content), followed by rec-content containing rec-title and rec-desc.]
     </div>
   </div>
 <!-- EXTRAS_PLACEHOLDER -->
