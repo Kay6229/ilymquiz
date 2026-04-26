@@ -741,6 +741,13 @@ async function generateReportForId(paidReportId) {
     return { ok: false, reason: 'not_found' };
   }
 
+  // GUARD: if the report is already complete, skip regeneration.
+  // Prevents Stripe webhook retries from regenerating reports.
+  if (report.report_status === 'complete' && report.report_html) {
+    console.log(`Report ${paidReportId} already generated, skipping regeneration`);
+    return { ok: true, report, skipped: true };
+  }
+
   const { prompt, reportExtras } = buildPrompt(report);
 
   const message = await anthropic.messages.create({
@@ -802,6 +809,25 @@ ${reportBody}
 async function sendReportEmail(report) {
   if (!report.customer_email) return { ok: false, reason: 'no_email' };
 
+  // GUARD: re-fetch the latest record and bail if email was already sent.
+  // Prevents Stripe webhook retries from emailing the customer multiple times.
+  const { data: fresh, error: freshError } = await supabase
+    .from('paid_reports')
+    .select('email_sent')
+    .eq('id', report.id)
+    .single();
+
+  if (freshError) {
+    console.error('Email guard fetch error:', freshError);
+    // Fail safe: do NOT send if we can't verify status, to avoid potential duplicates.
+    return { ok: false, reason: 'guard_fetch_failed' };
+  }
+
+  if (fresh?.email_sent) {
+    console.log(`Email already sent for report ${report.id}, skipping`);
+    return { ok: true, skipped: true };
+  }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ilymquiz.com';
   const reportUrl = `${siteUrl}/report?id=${report.id}`;
   const names = Array.isArray(report.player_names) ? report.player_names.join(' & ') : '';
@@ -841,6 +867,21 @@ async function sendReportEmail(report) {
 </html>
   `.trim();
 
+  // Mark email_sent BEFORE actually sending.
+  // This way, if a retry comes in while we're still calling Resend, the retry's
+  // guard check above will see email_sent=true and skip. Worst case on a real
+  // Resend failure: we don't email this person, but they can still view their
+  // report at the link, and we'd rather miss one than send three.
+  const { error: markError } = await supabase
+    .from('paid_reports')
+    .update({ email_sent: true, email_sent_at: new Date().toISOString() })
+    .eq('id', report.id);
+
+  if (markError) {
+    console.error('Failed to mark email_sent before send:', markError);
+    return { ok: false, reason: 'mark_failed' };
+  }
+
   const { data: resendData, error: resendError } = await resend.emails.send({
     from: 'ILYMQuiz <reports@ilymquiz.com>',
     to: report.customer_email,
@@ -852,11 +893,6 @@ async function sendReportEmail(report) {
     console.error('Resend error:', resendError);
     return { ok: false, reason: 'resend_failed' };
   }
-
-  await supabase
-    .from('paid_reports')
-    .update({ email_sent: true, email_sent_at: new Date().toISOString() })
-    .eq('id', report.id);
 
   return { ok: true, emailId: resendData?.id };
 }
@@ -924,7 +960,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true, generationFailed: true });
     }
 
-    console.log(`Report generated for ${paidReportId}`);
+    if (genResult.skipped) {
+      console.log(`Report ${paidReportId} already generated (retry detected)`);
+    } else {
+      console.log(`Report generated for ${paidReportId}`);
+    }
 
     // Step 3: send the email
     const emailResult = await sendReportEmail(genResult.report);
@@ -933,7 +973,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true, emailFailed: true });
     }
 
-    console.log(`Email sent for report ${paidReportId}`);
+    if (emailResult.skipped) {
+      console.log(`Email already sent for ${paidReportId} (retry detected)`);
+    } else {
+      console.log(`Email sent for report ${paidReportId}`);
+    }
     return res.status(200).json({ received: true, complete: true });
 
   } catch (err) {
