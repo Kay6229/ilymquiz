@@ -190,12 +190,143 @@ function calculateCompatibility(mode, playerAnswers, playerLangTotals, playerSco
   };
 }
 
+// Build the same share card that appears on the results page.
+// This produces a self-contained HTML block + a Save & Share button that uses
+// html2canvas to download the card as a PNG. The customer sees the same
+// rainbow-bordered card they saw on results, ready to download from the report.
+function buildShareCardHtml(mode, playerNames, playerScores) {
+  const maxPossible = 44;
+
+  // Theme per mode (matches the t() function on the results page)
+  const themes = {
+    couple:   { accent: '#D4537E', emoji: '💕', shareName: 'Couple' },
+    friends:  { accent: '#378ADD', emoji: '🤝', shareName: 'Friends' },
+    siblings: { accent: '#9d7fd4', emoji: '👯', shareName: 'Siblings' }
+  };
+  const th = themes[mode] || themes.couple;
+
+  // Love type label per percentage (matches loveType() on results page)
+  function loveType(score) {
+    const pct = (score / maxPossible) * 100;
+    let label;
+    if (mode === 'friends') {
+      if (pct >= 87) label = 'Devoted Friend';
+      else if (pct >= 70) label = 'All-in Friend';
+      else if (pct >= 55) label = 'Warm Friend';
+      else if (pct >= 40) label = 'Consistent Friend';
+      else label = 'Friend in Progress';
+    } else if (mode === 'siblings') {
+      if (pct >= 87) label = 'Devoted Sibling';
+      else if (pct >= 70) label = 'All-in Sibling';
+      else if (pct >= 55) label = 'Warm Sibling';
+      else if (pct >= 40) label = 'Consistent Sibling';
+      else label = 'Sibling in Progress';
+    } else {
+      if (pct >= 87) label = 'Devoted Lover';
+      else if (pct >= 70) label = 'All-in Lover';
+      else if (pct >= 55) label = 'Warm Lover';
+      else if (pct >= 40) label = 'Consistent Lover';
+      else label = 'Love in Progress';
+    }
+    return { label };
+  }
+
+  // Build ranked array (highest score first)
+  const ranked = playerNames.map((name, i) => ({
+    name,
+    score: playerScores[i],
+    pct: Math.round((playerScores[i] / maxPossible) * 100)
+  })).sort((a, b) => b.score - a.score);
+
+  const isGroup = playerNames.length > 2;
+  const isTie = !isGroup && ranked.length === 2 && ranked[0].score === ranked[1].score;
+
+  // Rainbow card colors for each player (matches results page)
+  const rainbow = [
+    { bg: '#f0fdf4', border: '#86efac', pct: '#166534', label: '#166534' },
+    { bg: '#fefce8', border: '#fde047', pct: '#854d0e', label: '#854d0e' },
+    { bg: '#fff7ed', border: '#fdba74', pct: '#9a3412', label: '#9a3412' },
+    { bg: '#fef2f2', border: '#fca5a5', pct: '#991b1b', label: '#991b1b' },
+    { bg: '#fdf4ff', border: '#d8b4fe', pct: '#6b21a8', label: '#6b21a8' },
+    { bg: '#eff6ff', border: '#93c5fd', pct: '#1e40af', label: '#1e40af' },
+    { bg: '#fff7ed', border: '#fb923c', pct: '#7c2d12', label: '#7c2d12' },
+    { bg: '#fef2f2', border: '#f87171', pct: '#7f1d1d', label: '#7f1d1d' }
+  ];
+  const tieC = { bg: '#f8f8f8', border: '#e0e0e0', pct: '#555', label: '#888' };
+
+  // Winner / tie banner
+  let winnerInner;
+  if (isTie) {
+    winnerInner = `<div style="font-size:28px;margin-bottom:6px">${th.emoji}${th.emoji}</div>`
+      + `<div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.2)">It is a tie!</div>`
+      + `<div style="font-size:11px;color:rgba(255,255,255,0.9);margin-top:3px;font-weight:600">Equally matched. Equally insufferable.</div>`;
+  } else {
+    let winnerLine;
+    if (mode === 'friends') {
+      winnerLine = ranked[0].name + ' Is The Better Friend!';
+    } else if (mode === 'siblings') {
+      winnerLine = ranked[0].name + ' Is The Better Sibling!';
+    } else {
+      winnerLine = ranked[0].name + ' Loves ' + (ranked[1] ? ranked[1].name : '') + ' More!';
+    }
+    winnerInner = `<div style="font-size:28px;margin-bottom:4px">🏆</div>`
+      + `<div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.2)">${escapeHtml(winnerLine)}</div>`
+      + `<div style="font-size:11px;color:rgba(255,255,255,0.9);margin-top:3px;font-weight:600">Officially. Mathematically. Undeniably.</div>`;
+  }
+
+  // Player score rows
+  let scoresHTML = '';
+  ranked.forEach((p, i) => {
+    const lv = loveType(p.score);
+    const c = isTie ? tieC : (rainbow[i] || rainbow[rainbow.length - 1]);
+    scoresHTML += `<div style="display:flex;align-items:center;justify-content:space-between;background:${c.bg};border:1.5px solid ${c.border};border-radius:10px;padding:10px 14px;margin-bottom:7px">`
+      + `<div style="font-size:14px;font-weight:700;color:#111">${escapeHtml(p.name)}</div>`
+      + `<div style="text-align:right"><div style="font-size:20px;font-weight:900;color:${c.pct};letter-spacing:-0.5px">${p.pct}%</div>`
+      + `<div style="font-size:10px;color:${c.label};margin-top:1px;font-weight:600">${escapeHtml(lv.label)}</div></div>`
+      + `</div>`;
+  });
+
+  // Full card HTML — id="report-share-card" so html2canvas can grab it
+  const cardHTML = `<div id="report-share-card" style="border-radius:20px;padding:4px;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#f5d020,#c9940a,#7d5a00);box-shadow:0 4px 20px rgba(180,130,0,0.25);margin-bottom:16px;max-width:480px;margin-left:auto;margin-right:auto">`
+    + `<div style="background:#fff;border-radius:17px;padding:18px">`
+    + `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">`
+    + `<div style="font-size:14px;font-weight:800;color:#111"><span style="color:#D4537E">ILYM</span>Quiz</div>`
+    + `<div style="font-size:11px;font-weight:700;background:${th.accent};color:#fff;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:0.06em">${th.shareName}</div>`
+    + `</div>`
+    + `<div style="position:relative;overflow:hidden;background:linear-gradient(135deg,#7d5a00,#c9940a,#f5d020,#f5d020,#c9940a,#7d5a00);border-radius:12px;padding:18px 14px;text-align:center;margin-bottom:12px">`
+    + `<div style="position:relative;z-index:1">${winnerInner}</div>`
+    + `</div>`
+    + scoresHTML
+    + `<div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid #f0f0f0;margin-top:4px">`
+    + `<div style="font-size:11px;color:#aaa;font-weight:600">ILYMQuiz.com</div>`
+    + `<div style="font-size:11px;color:#aaa;font-weight:700">#NoILoveYouMore</div>`
+    + `</div>`
+    + `</div></div>`;
+
+  // Section wrapper with the Save & Share button below the card
+  const sectionHtml = `
+  <div class="section share-section">
+    <div class="eyebrow">Save the moment</div>
+    <h2 class="h2">Share your <span class="accent">official ranking.</span></h2>
+    <p class="body-text">Save the card below and post it wherever. The receipts speak for themselves.</p>
+    ${cardHTML}
+    <button id="report-save-share-btn" class="report-share-btn" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Save &amp; Share
+    </button>
+  </div>`;
+
+  return sectionHtml;
+}
+
 // Build Side by Side table + Note from Team as deterministic HTML, no LLM involved.
 // - Overview tier: just the note section
 // - Full tier: Side by Side (from real playerAnswers + playerSurveys) + note section
 // This prevents hallucinated questions — we use the actual playerAnswers from the DB.
-function buildReportExtras(tier, mode, playerNames, playerAnswers, playerSurveys) {
+function buildReportExtras(tier, mode, playerNames, playerAnswers, playerSurveys, playerScores) {
   const [nameA, nameB] = playerNames;
+
+  // Build the share card section (always shown — appears above the Note from Team)
+  const shareSection = buildShareCardHtml(mode, playerNames, playerScores);
 
   // Side by Side — Full Report only
   let sideBySide = '';
@@ -290,7 +421,7 @@ function buildReportExtras(tier, mode, playerNames, playerAnswers, playerSurveys
     </div>
   </div>`;
 
-  return sideBySide + noteSection;
+  return shareSection + sideBySide + noteSection;
 }
 
 const REPORT_CSS = `
@@ -435,6 +566,28 @@ const REPORT_CSS = `
   .sbs-ans-label.sbs-ans-a { color: var(--pink-deep); }
   .sbs-ans-label.sbs-ans-b { color: var(--blue-deep); }
   .sbs-ans-text { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+  /* Save & Share section on the report */
+  .share-section { text-align: center; }
+  .report-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(135deg, #7d5a00, #c9940a, #f5d020, #c9940a, #7d5a00);
+    box-shadow: 0 2px 12px rgba(180, 130, 0, 0.3);
+    letter-spacing: -0.2px;
+    margin-top: 8px;
+    font-family: var(--sans);
+  }
+  .report-share-btn:active { opacity: 0.85; }
+  .report-share-btn:disabled { opacity: 0.6; cursor: default; }
 
   /* Note from team (closing section) */
   .note-section { background: linear-gradient(180deg, #fff, var(--pink-soft)); }
@@ -610,7 +763,7 @@ ${compat.label.toUpperCase()} (CALCULATED — USE THIS EXACT NUMBER, DO NOT RECA
     ? `\n- The match rate is LOW (${compat.matchedQuestions}/${compat.totalQuestions}). Frame this as "you see things differently" rather than as failure — different perspectives can be a feature, not a bug.`
     : '';
 
-  const reportExtras = buildReportExtras(tier, mode, player_names, player_answers, player_surveys);
+  const reportExtras = buildReportExtras(tier, mode, player_names, player_answers, player_surveys, player_scores);
   const prompt = `You are writing a personalized relationship compatibility report for ILYMQuiz ("No, I Love YOU More"). Tone: playful, warm, witty, BuzzFeed-meets-relationship-coach. Short punchy sentences. Specific to THIS pair. Avoid em-dashes; use periods or commas. Keep paragraphs tight (2-3 sentences max). Prioritize pithy and clever over long and explanatory.
 
 MODE: ${mode}
@@ -786,10 +939,45 @@ async function generateReportForId(paidReportId) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your ILYMQuiz Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 ${REPORT_CSS}
 </head>
 <body>
 ${reportBody}
+<script>
+(function(){
+  var btn = document.getElementById('report-save-share-btn');
+  if (!btn) return;
+  var card = document.getElementById('report-share-card');
+  if (!card) return;
+  var originalHtml = btn.innerHTML;
+  btn.addEventListener('click', function(){
+    if (typeof html2canvas !== 'function') {
+      alert('Save tool failed to load. Please refresh and try again.');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    html2canvas(card, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    }).then(function(canvas){
+      var link = document.createElement('a');
+      link.download = 'ILYM-Quiz-Results.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Saved! Share it 🎉';
+      btn.disabled = false;
+      setTimeout(function(){ btn.innerHTML = originalHtml; }, 4000);
+    }).catch(function(){
+      btn.textContent = 'Try again';
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
 </body>
 </html>`;
 
