@@ -76,25 +76,24 @@ module.exports = async (req, res) => {
       });
 
       const medals = ['🥇', '🥈', '🥉'];
-      let resultsText = `🏆 ILYM Quiz Results are in!\n\n`;
+      let resultsHeader = `🩷 No, I Love YOU More — the results are in!\n\n`;
       sorted.forEach((r, i) => {
         const score = JSON.parse(r.scores);
-        const maxPts = mode === 'couple' ? 44 : 44;
+        const maxPts = 44;
         const pct = Math.round(score / maxPts * 100);
-        resultsText += `${medals[i] || '#' + (i + 1)} ${r.player_name}: ${pct}%\n`;
+        resultsHeader += `${medals[i] || '#' + (i + 1)} ${r.player_name}: ${pct}%\n`;
       });
-      resultsText += `\nSee the full results at ILYMQuiz.com\n#ILYMQuiz #NoILoveYouMore`;
-
-      // Text everyone
-      const smsPromises = playerPhones.map((phone) => {
+      // Text each player a personalized link to their own results
+      const smsPromises = playerPhones.map((phone, idx) => {
         if (!phone) return Promise.resolve();
+        const personalLink = `https://www.ilymquiz.com/?session=${sessionId}&player=${idx}`;
+        const personalText = resultsHeader + `\nTap to see your full breakdown:\n${personalLink}\n\n#ILYMQuiz`;
         return twilioClient.messages.create({
-          body: resultsText,
+          body: personalText,
           messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
           to: phone
         });
       });
-
       await Promise.all(smsPromises);
 
       return res.status(200).json({
