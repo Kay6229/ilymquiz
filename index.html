@@ -1634,6 +1634,7 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
       banner.remove();
       showResults();
       setTimeout(function(){document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth',block:'start'});},100);
+      };
     document.getElementById('restore-no').onclick=function(){
       localStorage.removeItem('ilymquiz_results');
       banner.remove();
