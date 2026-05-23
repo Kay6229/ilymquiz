@@ -1057,6 +1057,23 @@ function showWaiting(){
   .then(function(data){
     if(!data.success){throw new Error(data.error||'Failed to create session');}
     currentSessionId=data.sessionId;
+    // Submit Player 1's answers now that we have a session ID
+    fetch('/api/submit-response',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        sessionId:data.sessionId,
+        playerIndex:0,
+        playerName:playerNames[0],
+        scores:scores[0],
+        langTotals:langTotals[0],
+        surveyAnswers:playerSurveys[0]||{}
+      })
+    }).then(function(r){return r.json();}).then(function(submitData){
+      if(submitData.allDone){
+        showResultsFromAPI(submitData);
+      }
+    }).catch(function(err){console.error('Player 1 submit error:',err);});
     lc.innerHTML='';
     var wt=document.getElementById('waiting-title');
     var ws=document.getElementById('waiting-sub');
