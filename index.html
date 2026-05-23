@@ -1580,6 +1580,7 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
     if(!data.success)return;
     if(data.status==='complete'){
       showResultsFromAPI(data);
+      setTimeout(function(){document.querySelector('.quiz-section').scrollIntoView({behavior:'smooth',block:'start'});},100);
       return;
     }
     mode=data.mode;
