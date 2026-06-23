@@ -298,6 +298,10 @@ footer a{color:#aaa;text-decoration:none}
 </style>
 </head>
 <body>
+<script>
+// Capture ?ref=creator-name from URL on landing and stash for later attribution
+(function(){var p=new URLSearchParams(window.location.search);var r=p.get('ref');if(r)sessionStorage.setItem('ilymq_ref',r);})();
+</script>
 <nav>
   <a class="nav-logo" href="#"><span>ILYM</span>Quiz</a>
   <button class="nav-cta" onclick="scrollToQuiz()">Take the Quiz</button>
@@ -978,7 +982,8 @@ function nextQ(){
             playerName:playerNames[currentPlayer],
             scores:scores[currentPlayer],
             langTotals:langTotals[currentPlayer],
-            surveyAnswers:playerSurveys[currentPlayer]||{}
+            surveyAnswers:playerSurveys[currentPlayer]||{},
+            referralSource:sessionStorage.getItem('ilymq_ref')||null
           })
         }).then(function(r){return r.json();}).then(function(data){
           if(data.allDone){showResultsFromAPI(data);}
@@ -1067,7 +1072,8 @@ function showWaiting(){
         playerName:playerNames[0],
         scores:scores[0],
         langTotals:langTotals[0],
-        surveyAnswers:playerSurveys[0]||{}
+        surveyAnswers:playerSurveys[0]||{},
+        referralSource:sessionStorage.getItem('ilymq_ref')||null
       })
     }).then(function(r){return r.json();}).then(function(submitData){
       if(submitData.allDone){
@@ -1440,7 +1446,8 @@ function handleReport(tier){
     playerScores:scores,
     playerLangTotals:langTotals,
     playerSurveys:playerSurveys,
-    playerAnswers:playerAnswers||null
+    playerAnswers:playerAnswers||null,
+    referralSource:sessionStorage.getItem('ilymq_ref')||null
   };
   fetch('/api/create-checkout',{
     method:'POST',
