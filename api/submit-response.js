@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { sessionId, playerIndex, playerName, scores, langTotals, surveyAnswers } = req.body;
+    const { sessionId, playerIndex, playerName, scores, langTotals, surveyAnswers, referralSource } = req.body;
 
     // Save this player's response
     const { error: insertError } = await supabase
@@ -30,7 +30,8 @@ module.exports = async (req, res) => {
         player_name: playerName,
         scores: JSON.stringify(scores),
         lang_totals: JSON.stringify(langTotals),
-        survey_answers: JSON.stringify(surveyAnswers)
+        survey_answers: JSON.stringify(surveyAnswers),
+        referral_source: referralSource || null
       }]);
 
     if (insertError) throw insertError;
