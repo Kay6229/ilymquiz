@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       playerScores,      // [38, 32]
       playerLangTotals,  // [{time:3, words:2, ...}, {...}]
       playerSurveys,     // [{ll:"...", dyn:"...", ...}, {...}]
-      playerAnswers      // full Q+A pairs (only for Full Report)
+      playerAnswers,     // full Q+A pairs (only for Full Report)
+      referralSource     // creator/source tag from ?ref= URL param
     } = req.body;
     // Basic validation
     if (!tier || !mode || !playerNames || !playerScores || !playerLangTotals) {
@@ -48,7 +49,8 @@ export default async function handler(req, res) {
         player_answers: playerAnswers || null,
         tier,
         payment_status: 'pending',
-        report_status: 'unpaid'
+        report_status: 'unpaid',
+        referral_source: referralSource || null
       })
       .select()
       .single();
