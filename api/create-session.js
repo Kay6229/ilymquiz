@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
 
     // Create session in Supabase
     const { data: session, error } = await supabase
-      .from('sessions')
+      .from('sms_sessions')
       .insert([{
         mode,
         player_names: JSON.stringify(playerNames),
