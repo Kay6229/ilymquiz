@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
 
     // Save this player's response
     const { error: insertError } = await supabase
-      .from('responses')
+      .from('sms_responses')
       .insert([{
         session_id: sessionId,
         player_index: playerIndex,
@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
 
     // Check how many responses exist for this session
     const { data: responses, error: countError } = await supabase
-      .from('responses')
+      .from('sms_responses')
       .select('*')
       .eq('session_id', sessionId);
 
@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
 
     // Get the session to find total player count
     const { data: session, error: sessionError } = await supabase
-      .from('sessions')
+      .from('sms_sessions')
       .select('*')
       .eq('id', sessionId)
       .single();
@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
     if (allDone) {
       // Mark session complete
       await supabase
-        .from('sessions')
+        .from('sms_sessions')
         .update({ status: 'complete', completed_at: new Date().toISOString() })
         .eq('id', sessionId);
 
