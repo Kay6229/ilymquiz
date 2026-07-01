@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
 
     // Get session
     const { data: session, error: sessionError } = await supabase
-      .from('sessions')
+      .from('sms_sessions')
       .select('*')
       .eq('id', sessionId)
       .single();
@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
 
     // Get all responses for this session
     const { data: responses, error: responsesError } = await supabase
-      .from('responses')
+      .from('sms_responses')
       .select('*')
       .eq('session_id', sessionId)
       .order('player_index', { ascending: true });
