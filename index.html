@@ -301,6 +301,24 @@ footer a{color:#aaa;text-decoration:none}
 <script>
 // Capture ?ref=creator-name from URL on landing and stash for later attribution
 (function(){var p=new URLSearchParams(window.location.search);var r=p.get('ref');if(r)sessionStorage.setItem('ilymq_ref',r);})();
+// Funnel event tracker (fire-and-forget)
+function ilymqTrack(eventType, mode){
+  try {
+    fetch('/api/track-event', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event_type: eventType,
+        referral_source: sessionStorage.getItem('ilymq_ref') || null,
+        mode: mode || null
+      })
+    }).catch(function(){});
+  } catch(e){}
+}
+if (sessionStorage.getItem('ilymq_ref') && !sessionStorage.getItem('ilymq_landed')) {
+  ilymqTrack('landed', null);
+  sessionStorage.setItem('ilymq_landed', '1');
+}
 </script>
 <nav>
   <a class="nav-logo" href="#"><span>ILYM</span>Quiz</a>
@@ -829,6 +847,7 @@ function checkSetupComplete(){
 function startQuiz(){
   var btn=document.getElementById('start-btn');
   if(btn.classList.contains('btn-disabled'))return;
+  ilymqTrack('quiz_start', mode);
   var nameInputs=document.querySelectorAll('#names-grid input');
   playerNames=Array.from(nameInputs).map(function(i){return i.value.trim();});
   var phoneInputs=document.querySelectorAll('#phones-grid input');
@@ -1163,6 +1182,7 @@ function showResultsFromAPI(data){
 
 function showResults(){
   showScreen('s-results');
+  ilymqTrack('quiz_complete', mode);
   try{
     var stateToSave={
       mode:mode,
