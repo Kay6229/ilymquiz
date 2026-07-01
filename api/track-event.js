@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     if (!event_type) return res.status(400).json({ error: 'event_type required' });
 
     const { error } = await supabase
-      .from('funnel_events')
+      .from('visitor_activity')
       .insert({
         event_type,
         referral_source: referral_source || null,
