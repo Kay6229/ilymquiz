@@ -5,15 +5,19 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
+// Same-origin only — CORS headers removed so other sites' scripts can't
+// spam our analytics. Values are length-capped to keep the table clean.
+const cap = (v, n) => (typeof v === 'string' ? v.slice(0, n) : null);
+
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { event_type, referral_source, mode, session_id } = req.body;
+    let { event_type, referral_source, mode, session_id } = req.body || {};
+    event_type = cap(event_type, 50);
+    referral_source = cap(referral_source, 100);
+    mode = cap(mode, 20);
+    session_id = cap(session_id, 60);
     if (!event_type) return res.status(400).json({ error: 'event_type required' });
 
     const { error } = await supabase

@@ -17,6 +17,29 @@ const supabase = createClient(
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Model is configurable so a retired model ID never silently breaks purchases.
+const REPORT_MODEL = process.env.ANTHROPIC_REPORT_MODEL || 'claude-sonnet-4-5-20250929';
+// Where failure alerts go so a paying customer never sits in 'failed' unnoticed.
+const ALERT_EMAIL = process.env.ALERT_EMAIL || 'kay6229@gmail.com';
+
+// Email myself when anything in the paid flow fails. Never throws.
+async function sendFailureAlert(paidReportId, stage, detail) {
+  try {
+    await resend.emails.send({
+      from: 'ILYMQuiz Alerts <reports@ilymquiz.com>',
+      to: ALERT_EMAIL,
+      subject: `🚨 ILYMQuiz paid flow failed: ${stage}`,
+      html: `<p>A paying customer hit a failure.</p>
+<p><strong>Report ID:</strong> ${paidReportId}<br>
+<strong>Stage:</strong> ${stage}<br>
+<strong>Detail:</strong> ${String(detail || 'none').slice(0, 500)}</p>
+<p>Check Supabase paid_reports and Vercel logs. Customer may need a manual retry or refund.</p>`
+    });
+  } catch (err) {
+    console.error('Failed to send failure alert:', err.message);
+  }
+}
+
 export const config = {
   api: { bodyParser: false },
   maxDuration: 300
@@ -904,7 +927,7 @@ async function generateReportForId(paidReportId) {
   const { prompt, reportExtras } = buildPrompt(report);
 
   const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
+    model: REPORT_MODEL,
     max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }]
   });
@@ -939,7 +962,7 @@ async function generateReportForId(paidReportId) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your ILYMQuiz Report</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 ${REPORT_CSS}
 </head>
 <body>
@@ -1122,8 +1145,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing paid_report_id' });
   }
 
-  // Step 1: mark payment as paid immediately
-  const { error: updateError } = await supabase
+  // Step 1: mark paid AND claim generation atomically.
+  // The .not('report_status','in',...) filter makes this a compare-and-swap:
+  // if a concurrent webhook retry already claimed this report (status is
+  // 'generating' or 'complete'), zero rows update and we do NOT start a
+  // second Claude generation. Prevents duplicate API spend when Stripe
+  // retries while the first delivery is still generating.
+  const { data: claimed, error: updateError } = await supabase
     .from('paid_reports')
     .update({
       payment_status: 'paid',
@@ -1131,11 +1159,32 @@ export default async function handler(req, res) {
       customer_email: customerEmail,
       report_status: 'generating'
     })
-    .eq('id', paidReportId);
+    .eq('id', paidReportId)
+    .not('report_status', 'in', '("generating","complete")')
+    .select('id');
 
   if (updateError) {
     console.error('Supabase update error:', updateError);
     return res.status(500).json({ error: 'Failed to update payment status' });
+  }
+
+  if (!claimed || claimed.length === 0) {
+    // Another delivery of this webhook owns (or finished) generation.
+    // If it's complete but the email didn't go out, finish that part here.
+    const { data: existing } = await supabase
+      .from('paid_reports')
+      .select('*')
+      .eq('id', paidReportId)
+      .single();
+    if (existing && existing.report_status === 'complete' && !existing.email_sent) {
+      const emailResult = await sendReportEmail(existing);
+      if (!emailResult.ok) {
+        console.error('Email send failed on retry:', emailResult.reason);
+        await sendFailureAlert(paidReportId, 'email (retry path)', emailResult.reason);
+      }
+    }
+    console.log(`Report ${paidReportId} already claimed/complete, skipping generation`);
+    return res.status(200).json({ received: true, duplicate: true });
   }
 
   console.log(`Payment completed for report ${paidReportId}`);
@@ -1145,6 +1194,9 @@ export default async function handler(req, res) {
     const genResult = await generateReportForId(paidReportId);
     if (!genResult.ok) {
       console.error('Report generation failed:', genResult.reason);
+      // Reset to 'failed' so a Stripe retry can re-claim and try again.
+      await supabase.from('paid_reports').update({ report_status: 'failed' }).eq('id', paidReportId);
+      await sendFailureAlert(paidReportId, 'report generation', genResult.reason);
       return res.status(200).json({ received: true, generationFailed: true });
     }
 
@@ -1158,6 +1210,7 @@ export default async function handler(req, res) {
     const emailResult = await sendReportEmail(genResult.report);
     if (!emailResult.ok) {
       console.error('Email send failed:', emailResult.reason);
+      await sendFailureAlert(paidReportId, 'email delivery', emailResult.reason);
       return res.status(200).json({ received: true, emailFailed: true });
     }
 
@@ -1171,6 +1224,7 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Post-payment processing error:', err);
     await supabase.from('paid_reports').update({ report_status: 'failed' }).eq('id', paidReportId);
+    await sendFailureAlert(paidReportId, 'unexpected error', err.message);
     return res.status(200).json({ received: true, error: err.message });
   }
 }
